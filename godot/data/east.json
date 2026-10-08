@@ -1,0 +1,512 @@
+{
+  "team_id": "EAST",
+  "team_name": "East",
+  "players": [
+    {
+      "player_id": "east_qb_1",
+      "display_name": "East QB #1",
+      "position": "QB",
+      "team_id": "EAST",
+      "ratings": {
+        "short_accuracy": 79,
+        "intermediate_accuracy": 77,
+        "deep_accuracy": 94,
+        "decision_making": 73,
+        "anticipation": 65,
+        "pocket_awareness": 76,
+        "pressure_performance": 73,
+        "release_speed": 81,
+        "arm_strength": 81,
+        "mobility": 88,
+        "scramble_decision": 74,
+        "ball_security": 94
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "east_rb_1",
+      "display_name": "East RB #1",
+      "position": "RB",
+      "team_id": "EAST",
+      "ratings": {
+        "speed": 92,
+        "acceleration": 91,
+        "vision": 91,
+        "gap_patience": 85,
+        "contact_balance": 75,
+        "tackle_breaking": 86,
+        "run_block": 55,
+        "yac": 94,
+        "pass_protection": 63,
+        "catch": 75
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "east_rb_2",
+      "display_name": "East RB #2",
+      "position": "RB",
+      "team_id": "EAST",
+      "ratings": {
+        "speed": 81,
+        "acceleration": 88,
+        "vision": 88,
+        "gap_patience": 84,
+        "contact_balance": 80,
+        "tackle_breaking": 72,
+        "run_block": 66,
+        "yac": 78,
+        "pass_protection": 62,
+        "catch": 78
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "east_te_1",
+      "display_name": "East TE #1",
+      "position": "TE",
+      "team_id": "EAST",
+      "ratings": {
+        "speed": 71,
+        "route_running": 87,
+        "catch": 92,
+        "contested_catch": 87,
+        "pass_block": 66,
+        "run_block": 74,
+        "yac": 87
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "east_wr_x",
+      "display_name": "East WR X",
+      "position": "WR_X",
+      "team_id": "EAST",
+      "ratings": {
+        "speed": 91,
+        "acceleration": 97,
+        "route_running": 82,
+        "release": 80,
+        "catch": 81,
+        "contested_catch": 77,
+        "yac": 87
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "east_wr_z",
+      "display_name": "East WR Z",
+      "position": "WR_Z",
+      "team_id": "EAST",
+      "ratings": {
+        "speed": 97,
+        "acceleration": 99,
+        "route_running": 77,
+        "release": 68,
+        "catch": 76,
+        "contested_catch": 69,
+        "yac": 74
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "east_wr_slot",
+      "display_name": "East WR Slot",
+      "position": "WR_SLOT",
+      "team_id": "EAST",
+      "ratings": {
+        "speed": 87,
+        "acceleration": 84,
+        "route_running": 97,
+        "release": 78,
+        "catch": 72,
+        "contested_catch": 79,
+        "yac": 82
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "east_lt",
+      "display_name": "East LT",
+      "position": "OT",
+      "team_id": "EAST",
+      "ratings": {
+        "pass_block": 88,
+        "run_block": 80,
+        "anchor": 93
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "east_lg",
+      "display_name": "East LG",
+      "position": "OG",
+      "team_id": "EAST",
+      "ratings": {
+        "pass_block": 73,
+        "run_block": 85,
+        "anchor": 77
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "east_c",
+      "display_name": "East C",
+      "position": "C",
+      "team_id": "EAST",
+      "ratings": {
+        "pass_block": 75,
+        "run_block": 67,
+        "anchor": 89
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "east_rg",
+      "display_name": "East RG",
+      "position": "OG",
+      "team_id": "EAST",
+      "ratings": {
+        "pass_block": 66,
+        "run_block": 86,
+        "anchor": 83
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "east_rt",
+      "display_name": "East RT",
+      "position": "OT",
+      "team_id": "EAST",
+      "ratings": {
+        "pass_block": 84,
+        "run_block": 68,
+        "anchor": 86
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "east_edge_1",
+      "display_name": "East EDGE 1",
+      "position": "EDGE",
+      "team_id": "EAST",
+      "ratings": {
+        "pass_rush": 83,
+        "run_defense": 81,
+        "speed": 80,
+        "power": 96,
+        "tackling": 77
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "east_edge_2",
+      "display_name": "East EDGE 2",
+      "position": "EDGE",
+      "team_id": "EAST",
+      "ratings": {
+        "pass_rush": 83,
+        "run_defense": 80,
+        "speed": 73,
+        "power": 79,
+        "tackling": 79
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "east_idl_1",
+      "display_name": "East IDL 1",
+      "position": "IDL",
+      "team_id": "EAST",
+      "ratings": {
+        "pass_rush": 77,
+        "run_defense": 85,
+        "power": 96,
+        "anchor": 96,
+        "tackling": 88
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "east_idl_2",
+      "display_name": "East IDL 2",
+      "position": "IDL",
+      "team_id": "EAST",
+      "ratings": {
+        "pass_rush": 75,
+        "run_defense": 90,
+        "power": 98,
+        "anchor": 95,
+        "tackling": 84
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "east_lb_1",
+      "display_name": "East LB 1",
+      "position": "LB",
+      "team_id": "EAST",
+      "ratings": {
+        "coverage": 74,
+        "recognition": 92,
+        "run_defense": 87,
+        "tackling": 85,
+        "speed": 81
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "east_lb_2",
+      "display_name": "East LB 2",
+      "position": "LB",
+      "team_id": "EAST",
+      "ratings": {
+        "coverage": 63,
+        "recognition": 68,
+        "run_defense": 78,
+        "tackling": 86,
+        "speed": 83
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "east_cb_boundary",
+      "display_name": "East CB Bound",
+      "position": "CB_BOUNDARY",
+      "team_id": "EAST",
+      "ratings": {
+        "coverage": 79,
+        "recognition": 74,
+        "speed": 95,
+        "tackling": 66
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "east_cb_field",
+      "display_name": "East CB Field",
+      "position": "CB_FIELD",
+      "team_id": "EAST",
+      "ratings": {
+        "coverage": 80,
+        "recognition": 66,
+        "speed": 98,
+        "tackling": 71
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "east_cb_nickel",
+      "display_name": "East CB Nickel",
+      "position": "CB_NICKEL",
+      "team_id": "EAST",
+      "ratings": {
+        "coverage": 94,
+        "recognition": 82,
+        "speed": 85,
+        "tackling": 79
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "east_s_free",
+      "display_name": "East Free Safety",
+      "position": "S_FREE",
+      "team_id": "EAST",
+      "ratings": {
+        "coverage": 84,
+        "recognition": 84,
+        "run_defense": 80,
+        "speed": 88,
+        "tackling": 86
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "east_s_strong",
+      "display_name": "East Strong Safety",
+      "position": "S_STRONG",
+      "team_id": "EAST",
+      "ratings": {
+        "coverage": 73,
+        "recognition": 86,
+        "run_defense": 77,
+        "speed": 79,
+        "tackling": 80
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "east_k",
+      "display_name": "East Kicker",
+      "position": "K",
+      "team_id": "EAST",
+      "ratings": {
+        "kick_accuracy": 78,
+        "kick_power": 81
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "east_p",
+      "display_name": "East Punter",
+      "position": "P",
+      "team_id": "EAST",
+      "ratings": {
+        "punt_power": 78,
+        "punt_accuracy": 86
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    }
+  ]
+}

@@ -1,0 +1,512 @@
+{
+  "team_id": "WEST",
+  "team_name": "West",
+  "players": [
+    {
+      "player_id": "west_qb_1",
+      "display_name": "West QB #1",
+      "position": "QB",
+      "team_id": "WEST",
+      "ratings": {
+        "short_accuracy": 83,
+        "intermediate_accuracy": 69,
+        "deep_accuracy": 72,
+        "decision_making": 79,
+        "anticipation": 67,
+        "pocket_awareness": 55,
+        "pressure_performance": 58,
+        "release_speed": 82,
+        "arm_strength": 92,
+        "mobility": 73,
+        "scramble_decision": 71,
+        "ball_security": 85
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "west_rb_1",
+      "display_name": "West RB #1",
+      "position": "RB",
+      "team_id": "WEST",
+      "ratings": {
+        "speed": 81,
+        "acceleration": 84,
+        "vision": 67,
+        "gap_patience": 77,
+        "contact_balance": 78,
+        "tackle_breaking": 83,
+        "run_block": 48,
+        "yac": 88,
+        "pass_protection": 67,
+        "catch": 70
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "west_rb_2",
+      "display_name": "West RB #2",
+      "position": "RB",
+      "team_id": "WEST",
+      "ratings": {
+        "speed": 85,
+        "acceleration": 90,
+        "vision": 64,
+        "gap_patience": 78,
+        "contact_balance": 84,
+        "tackle_breaking": 85,
+        "run_block": 73,
+        "yac": 75,
+        "pass_protection": 68,
+        "catch": 70
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "west_te_1",
+      "display_name": "West TE #1",
+      "position": "TE",
+      "team_id": "WEST",
+      "ratings": {
+        "speed": 78,
+        "route_running": 85,
+        "catch": 88,
+        "contested_catch": 85,
+        "pass_block": 75,
+        "run_block": 79,
+        "yac": 77
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "west_wr_x",
+      "display_name": "West WR X",
+      "position": "WR_X",
+      "team_id": "WEST",
+      "ratings": {
+        "speed": 87,
+        "acceleration": 95,
+        "route_running": 80,
+        "release": 76,
+        "catch": 77,
+        "contested_catch": 72,
+        "yac": 99
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "west_wr_z",
+      "display_name": "West WR Z",
+      "position": "WR_Z",
+      "team_id": "WEST",
+      "ratings": {
+        "speed": 97,
+        "acceleration": 94,
+        "route_running": 77,
+        "release": 78,
+        "catch": 82,
+        "contested_catch": 83,
+        "yac": 79
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "west_wr_slot",
+      "display_name": "West WR Slot",
+      "position": "WR_SLOT",
+      "team_id": "WEST",
+      "ratings": {
+        "speed": 86,
+        "acceleration": 86,
+        "route_running": 87,
+        "release": 75,
+        "catch": 78,
+        "contested_catch": 64,
+        "yac": 98
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "west_lt",
+      "display_name": "West LT",
+      "position": "OT",
+      "team_id": "WEST",
+      "ratings": {
+        "pass_block": 81,
+        "run_block": 78,
+        "anchor": 98
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "west_lg",
+      "display_name": "West LG",
+      "position": "OG",
+      "team_id": "WEST",
+      "ratings": {
+        "pass_block": 73,
+        "run_block": 68,
+        "anchor": 92
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "west_c",
+      "display_name": "West C",
+      "position": "C",
+      "team_id": "WEST",
+      "ratings": {
+        "pass_block": 90,
+        "run_block": 89,
+        "anchor": 91
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "west_rg",
+      "display_name": "West RG",
+      "position": "OG",
+      "team_id": "WEST",
+      "ratings": {
+        "pass_block": 90,
+        "run_block": 75,
+        "anchor": 64
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "west_rt",
+      "display_name": "West RT",
+      "position": "OT",
+      "team_id": "WEST",
+      "ratings": {
+        "pass_block": 78,
+        "run_block": 89,
+        "anchor": 83
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "west_edge_1",
+      "display_name": "West EDGE 1",
+      "position": "EDGE",
+      "team_id": "WEST",
+      "ratings": {
+        "pass_rush": 86,
+        "run_defense": 82,
+        "speed": 89,
+        "power": 84,
+        "tackling": 81
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "west_edge_2",
+      "display_name": "West EDGE 2",
+      "position": "EDGE",
+      "team_id": "WEST",
+      "ratings": {
+        "pass_rush": 92,
+        "run_defense": 79,
+        "speed": 78,
+        "power": 76,
+        "tackling": 79
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "west_idl_1",
+      "display_name": "West IDL 1",
+      "position": "IDL",
+      "team_id": "WEST",
+      "ratings": {
+        "pass_rush": 74,
+        "run_defense": 94,
+        "power": 90,
+        "anchor": 85,
+        "tackling": 81
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "west_idl_2",
+      "display_name": "West IDL 2",
+      "position": "IDL",
+      "team_id": "WEST",
+      "ratings": {
+        "pass_rush": 86,
+        "run_defense": 89,
+        "power": 92,
+        "anchor": 82,
+        "tackling": 84
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "west_lb_1",
+      "display_name": "West LB 1",
+      "position": "LB",
+      "team_id": "WEST",
+      "ratings": {
+        "coverage": 78,
+        "recognition": 79,
+        "run_defense": 72,
+        "tackling": 86,
+        "speed": 87
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "west_lb_2",
+      "display_name": "West LB 2",
+      "position": "LB",
+      "team_id": "WEST",
+      "ratings": {
+        "coverage": 84,
+        "recognition": 80,
+        "run_defense": 86,
+        "tackling": 77,
+        "speed": 83
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "west_cb_boundary",
+      "display_name": "West CB Bound",
+      "position": "CB_BOUNDARY",
+      "team_id": "WEST",
+      "ratings": {
+        "coverage": 79,
+        "recognition": 71,
+        "speed": 83,
+        "tackling": 72
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "west_cb_field",
+      "display_name": "West CB Field",
+      "position": "CB_FIELD",
+      "team_id": "WEST",
+      "ratings": {
+        "coverage": 81,
+        "recognition": 65,
+        "speed": 90,
+        "tackling": 75
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "west_cb_nickel",
+      "display_name": "West CB Nickel",
+      "position": "CB_NICKEL",
+      "team_id": "WEST",
+      "ratings": {
+        "coverage": 93,
+        "recognition": 84,
+        "speed": 89,
+        "tackling": 83
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "west_s_free",
+      "display_name": "West Free Safety",
+      "position": "S_FREE",
+      "team_id": "WEST",
+      "ratings": {
+        "coverage": 78,
+        "recognition": 66,
+        "run_defense": 77,
+        "speed": 83,
+        "tackling": 75
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "west_s_strong",
+      "display_name": "West Strong Safety",
+      "position": "S_STRONG",
+      "team_id": "WEST",
+      "ratings": {
+        "coverage": 68,
+        "recognition": 90,
+        "run_defense": 75,
+        "speed": 83,
+        "tackling": 80
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "west_k",
+      "display_name": "West Kicker",
+      "position": "K",
+      "team_id": "WEST",
+      "ratings": {
+        "kick_accuracy": 87,
+        "kick_power": 89
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    },
+    {
+      "player_id": "west_p",
+      "display_name": "West Punter",
+      "position": "P",
+      "team_id": "WEST",
+      "ratings": {
+        "punt_power": 95,
+        "punt_accuracy": 68
+      },
+      "rating_uncertainty": {},
+      "rating_provenance": {
+        "source": "procedural_generator_v1",
+        "as_of_season": 2024,
+        "sample_size": 500
+      },
+      "rating_version": "v1.0"
+    }
+  ]
+}

@@ -1,0 +1,609 @@
+{
+ "plays": [
+  {
+   "call_id": "IZS",
+   "name": "Inside Zone",
+   "category": "RUN_INSIDE_ZONE",
+   "formation": "SHOTGUN_11_SPREAD",
+   "personnel": {
+    "rb": 1,
+    "te": 1,
+    "wr": 3
+   },
+   "concept": "ZONE_RUN",
+   "run_direction": "MIDDLE",
+   "protection": "DEFAULT",
+   "motion": null,
+   "aggressiveness": 0.3,
+   "description": "The staple. Zone-block and let the back find the crease.",
+   "read_progression": []
+  },
+  {
+   "call_id": "OZS",
+   "name": "Outside Zone / Stretch",
+   "category": "RUN_OUTSIDE_ZONE",
+   "formation": "SINGLEBACK_12",
+   "personnel": {
+    "rb": 1,
+    "te": 2,
+    "wr": 2
+   },
+   "concept": "ZONE_RUN",
+   "run_direction": "RIGHT",
+   "protection": "DEFAULT",
+   "motion": null,
+   "aggressiveness": 0.4,
+   "description": "Stretch the defense sideline to sideline, cut upfield.",
+   "read_progression": []
+  },
+  {
+   "call_id": "PWO",
+   "name": "Power O",
+   "category": "RUN_POWER_GAP",
+   "formation": "I_FORM_21_PRO",
+   "personnel": {
+    "rb": 2,
+    "te": 1,
+    "wr": 2
+   },
+   "concept": "GAP_POWER",
+   "run_direction": "RIGHT",
+   "protection": "DEFAULT",
+   "motion": null,
+   "aggressiveness": 0.5,
+   "description": "Pulling guard and a lead fullback. Downhill and physical.",
+   "read_progression": []
+  },
+  {
+   "call_id": "CTR",
+   "name": "Counter Trey",
+   "category": "RUN_POWER_GAP",
+   "formation": "SINGLEBACK_12",
+   "personnel": {
+    "rb": 1,
+    "te": 2,
+    "wr": 2
+   },
+   "concept": "GAP_POWER",
+   "run_direction": "LEFT",
+   "protection": "DEFAULT",
+   "motion": null,
+   "aggressiveness": 0.5,
+   "description": "Misdirection: the line slants one way, guards pull the other.",
+   "read_progression": []
+  },
+  {
+   "call_id": "DRW",
+   "name": "Draw",
+   "category": "RUN_DRAW_TRAP",
+   "formation": "SHOTGUN_11_SPREAD",
+   "personnel": {
+    "rb": 1,
+    "te": 1,
+    "wr": 3
+   },
+   "concept": "DRAW_TRAP",
+   "run_direction": "MIDDLE",
+   "protection": "DEFAULT",
+   "motion": null,
+   "aggressiveness": 0.45,
+   "description": "Fake pass, then hand it off into a rushing front.",
+   "read_progression": []
+  },
+  {
+   "call_id": "SLN",
+   "name": "Slants",
+   "category": "PASS_QUICK_GAME",
+   "formation": "SHOTGUN_11_SPREAD",
+   "personnel": {
+    "rb": 1,
+    "te": 1,
+    "wr": 3
+   },
+   "concept": "QUICK_GAME",
+   "run_direction": null,
+   "protection": "DEFAULT",
+   "motion": null,
+   "aggressiveness": 0.4,
+   "description": "Quick slants: the ball is out before the rush arrives.",
+   "read_progression": [
+    {
+     "eligible_id": "wr_x",
+     "order": 1,
+     "route": "SLANT",
+     "depth_yards": 6.0
+    },
+    {
+     "eligible_id": "wr_slot",
+     "order": 2,
+     "route": "SLANT",
+     "depth_yards": 6.0
+    },
+    {
+     "eligible_id": "te_1",
+     "order": 3,
+     "route": "HITCH",
+     "depth_yards": 5.0
+    },
+    {
+     "eligible_id": "rb_1",
+     "order": 4,
+     "route": "FLAT",
+     "depth_yards": 2.0
+    }
+   ]
+  },
+  {
+   "call_id": "STK",
+   "name": "Stick",
+   "category": "PASS_QUICK_GAME",
+   "formation": "SHOTGUN_11_SPREAD",
+   "personnel": {
+    "rb": 1,
+    "te": 1,
+    "wr": 3
+   },
+   "concept": "QUICK_GAME",
+   "run_direction": null,
+   "protection": "DEFAULT",
+   "motion": null,
+   "aggressiveness": 0.35,
+   "description": "Three-step timing. Tight end sits in the hole.",
+   "read_progression": [
+    {
+     "eligible_id": "te_1",
+     "order": 1,
+     "route": "HITCH",
+     "depth_yards": 5.0
+    },
+    {
+     "eligible_id": "wr_slot",
+     "order": 2,
+     "route": "QUICK_OUT",
+     "depth_yards": 4.0
+    },
+    {
+     "eligible_id": "wr_x",
+     "order": 3,
+     "route": "HITCH",
+     "depth_yards": 6.0
+    },
+    {
+     "eligible_id": "rb_1",
+     "order": 4,
+     "route": "FLAT",
+     "depth_yards": 2.0
+    }
+   ]
+  },
+  {
+   "call_id": "SMH",
+   "name": "Smash",
+   "category": "PASS_INTERMEDIATE",
+   "formation": "SHOTGUN_11_SPREAD",
+   "personnel": {
+    "rb": 1,
+    "te": 1,
+    "wr": 3
+   },
+   "concept": "INTERMEDIATE",
+   "run_direction": null,
+   "protection": "DEFAULT",
+   "motion": null,
+   "aggressiveness": 0.55,
+   "description": "Corner route over a hitch. High-low on the cornerback.",
+   "read_progression": [
+    {
+     "eligible_id": "wr_z",
+     "order": 1,
+     "route": "CORNER",
+     "depth_yards": 16.0
+    },
+    {
+     "eligible_id": "wr_x",
+     "order": 2,
+     "route": "HITCH",
+     "depth_yards": 6.0
+    },
+    {
+     "eligible_id": "te_1",
+     "order": 3,
+     "route": "SEAM",
+     "depth_yards": 12.0
+    },
+    {
+     "eligible_id": "rb_1",
+     "order": 4,
+     "route": "FLAT",
+     "depth_yards": 2.0
+    }
+   ]
+  },
+  {
+   "call_id": "MSH",
+   "name": "Mesh",
+   "category": "PASS_MESH_DRAG",
+   "formation": "SHOTGUN_11_SPREAD",
+   "personnel": {
+    "rb": 1,
+    "te": 1,
+    "wr": 3
+   },
+   "concept": "MESH",
+   "run_direction": null,
+   "protection": "DEFAULT",
+   "motion": null,
+   "aggressiveness": 0.5,
+   "description": "Two crossers rub underneath. Beats man coverage.",
+   "read_progression": [
+    {
+     "eligible_id": "wr_x",
+     "order": 1,
+     "route": "CROSSER",
+     "depth_yards": 5.0
+    },
+    {
+     "eligible_id": "te_1",
+     "order": 2,
+     "route": "CROSSER",
+     "depth_yards": 7.0
+    },
+    {
+     "eligible_id": "wr_slot",
+     "order": 3,
+     "route": "CURL",
+     "depth_yards": 12.0
+    },
+    {
+     "eligible_id": "rb_1",
+     "order": 4,
+     "route": "FLAT",
+     "depth_yards": 2.0
+    }
+   ]
+  },
+  {
+   "call_id": "SAL",
+   "name": "Sail / Flood",
+   "category": "PASS_INTERMEDIATE",
+   "formation": "SHOTGUN_11_SPREAD",
+   "personnel": {
+    "rb": 1,
+    "te": 1,
+    "wr": 3
+   },
+   "concept": "INTERMEDIATE",
+   "run_direction": null,
+   "protection": "DEFAULT",
+   "motion": null,
+   "aggressiveness": 0.6,
+   "description": "Three levels on one side: flat, out, and a corner. Beats zone.",
+   "read_progression": [
+    {
+     "eligible_id": "wr_z",
+     "order": 1,
+     "route": "CORNER",
+     "depth_yards": 18.0
+    },
+    {
+     "eligible_id": "te_1",
+     "order": 2,
+     "route": "OUT",
+     "depth_yards": 10.0
+    },
+    {
+     "eligible_id": "rb_1",
+     "order": 3,
+     "route": "FLAT",
+     "depth_yards": 2.0
+    },
+    {
+     "eligible_id": "wr_x",
+     "order": 4,
+     "route": "DIG",
+     "depth_yards": 12.0
+    }
+   ]
+  },
+  {
+   "call_id": "DAG",
+   "name": "Dagger",
+   "category": "PASS_INTERMEDIATE",
+   "formation": "SHOTGUN_11_SPREAD",
+   "personnel": {
+    "rb": 1,
+    "te": 1,
+    "wr": 3
+   },
+   "concept": "INTERMEDIATE",
+   "run_direction": null,
+   "protection": "DEFAULT",
+   "motion": null,
+   "aggressiveness": 0.6,
+   "description": "Seam clears the safety, dig runs underneath.",
+   "read_progression": [
+    {
+     "eligible_id": "wr_slot",
+     "order": 1,
+     "route": "DIG",
+     "depth_yards": 14.0
+    },
+    {
+     "eligible_id": "wr_x",
+     "order": 2,
+     "route": "SEAM",
+     "depth_yards": 20.0
+    },
+    {
+     "eligible_id": "te_1",
+     "order": 3,
+     "route": "CURL",
+     "depth_yards": 10.0
+    },
+    {
+     "eligible_id": "rb_1",
+     "order": 4,
+     "route": "FLAT",
+     "depth_yards": 2.0
+    }
+   ]
+  },
+  {
+   "call_id": "PAB",
+   "name": "Play-Action Boot",
+   "category": "PASS_PLAY_ACTION",
+   "formation": "SINGLEBACK_12",
+   "personnel": {
+    "rb": 1,
+    "te": 2,
+    "wr": 2
+   },
+   "concept": "PLAY_ACTION",
+   "run_direction": null,
+   "protection": "PLAY_ACTION_HOLD",
+   "motion": null,
+   "aggressiveness": 0.55,
+   "description": "Sell the run, roll out, hit the tight end late.",
+   "read_progression": [
+    {
+     "eligible_id": "te_1",
+     "order": 1,
+     "route": "CROSSER",
+     "depth_yards": 8.0
+    },
+    {
+     "eligible_id": "wr_x",
+     "order": 2,
+     "route": "OUT",
+     "depth_yards": 12.0
+    },
+    {
+     "eligible_id": "rb_1",
+     "order": 3,
+     "route": "FLAT",
+     "depth_yards": 2.0
+    }
+   ]
+  },
+  {
+   "call_id": "PAP",
+   "name": "Play-Action Post",
+   "category": "PASS_PLAY_ACTION",
+   "formation": "I_FORM_21_PRO",
+   "personnel": {
+    "rb": 2,
+    "te": 1,
+    "wr": 2
+   },
+   "concept": "PLAY_ACTION",
+   "run_direction": null,
+   "protection": "PLAY_ACTION_HOLD",
+   "motion": null,
+   "aggressiveness": 0.75,
+   "description": "Run fake freezes linebackers; deep post behind them.",
+   "read_progression": [
+    {
+     "eligible_id": "wr_x",
+     "order": 1,
+     "route": "POST",
+     "depth_yards": 24.0
+    },
+    {
+     "eligible_id": "te_1",
+     "order": 2,
+     "route": "CROSSER",
+     "depth_yards": 9.0
+    },
+    {
+     "eligible_id": "rb_1",
+     "order": 3,
+     "route": "FLAT",
+     "depth_yards": 2.0
+    }
+   ]
+  },
+  {
+   "call_id": "4VT",
+   "name": "Four Verticals",
+   "category": "PASS_DEEP_SHOT",
+   "formation": "SHOTGUN_11_SPREAD",
+   "personnel": {
+    "rb": 1,
+    "te": 1,
+    "wr": 3
+   },
+   "concept": "DEEP_OVER_POST",
+   "run_direction": null,
+   "protection": "DEFAULT",
+   "motion": null,
+   "aggressiveness": 0.85,
+   "description": "Four deep streaks to stress a single-high safety.",
+   "read_progression": [
+    {
+     "eligible_id": "te_1",
+     "order": 1,
+     "route": "SEAM",
+     "depth_yards": 26.0
+    },
+    {
+     "eligible_id": "wr_slot",
+     "order": 2,
+     "route": "SEAM",
+     "depth_yards": 25.0
+    },
+    {
+     "eligible_id": "wr_z",
+     "order": 3,
+     "route": "GO",
+     "depth_yards": 35.0
+    },
+    {
+     "eligible_id": "wr_x",
+     "order": 4,
+     "route": "GO",
+     "depth_yards": 35.0
+    }
+   ]
+  },
+  {
+   "call_id": "HBS",
+   "name": "Screen",
+   "category": "PASS_SCREEN",
+   "formation": "SHOTGUN_11_SPREAD",
+   "personnel": {
+    "rb": 1,
+    "te": 1,
+    "wr": 3
+   },
+   "concept": "SCREEN",
+   "run_direction": null,
+   "protection": "SCREEN_RELEASE",
+   "motion": null,
+   "aggressiveness": 0.4,
+   "description": "Invite the rush, dump it to the back behind blockers.",
+   "read_progression": [
+    {
+     "eligible_id": "rb_1",
+     "order": 1,
+     "route": "SCREEN",
+     "depth_yards": -1.0
+    },
+    {
+     "eligible_id": "wr_x",
+     "order": 2,
+     "route": "SLANT",
+     "depth_yards": 8.0
+    }
+   ]
+  },
+  {
+   "call_id": "HMY",
+   "name": "Hail Mary",
+   "category": "PASS_HAIL_MARY",
+   "formation": "SHOTGUN_11_SPREAD",
+   "personnel": {
+    "rb": 1,
+    "te": 1,
+    "wr": 3
+   },
+   "concept": "HAIL_MARY",
+   "run_direction": null,
+   "protection": "MAX_PROTECT",
+   "motion": null,
+   "aggressiveness": 1.0,
+   "description": "Everybody deep. Pray.",
+   "read_progression": [
+    {
+     "eligible_id": "wr_x",
+     "order": 1,
+     "route": "HAIL_MARY",
+     "depth_yards": 50.0
+    },
+    {
+     "eligible_id": "wr_z",
+     "order": 2,
+     "route": "HAIL_MARY",
+     "depth_yards": 50.0
+    },
+    {
+     "eligible_id": "te_1",
+     "order": 3,
+     "route": "HAIL_MARY",
+     "depth_yards": 45.0
+    }
+   ]
+  },
+  {
+   "call_id": "FG",
+   "name": "Field Goal",
+   "category": "SPECIAL_TEAMS",
+   "formation": "SPECIAL_UNITS",
+   "personnel": {
+    "rb": 0,
+    "te": 0,
+    "wr": 0
+   },
+   "concept": "FIELD_GOAL",
+   "run_direction": null,
+   "protection": "DEFAULT",
+   "motion": null,
+   "read_progression": [],
+   "aggressiveness": 0.1,
+   "description": "Placekick for 3 points."
+  },
+  {
+   "call_id": "PNT",
+   "name": "Punt",
+   "category": "SPECIAL_TEAMS",
+   "formation": "SPECIAL_UNITS",
+   "personnel": {
+    "rb": 0,
+    "te": 0,
+    "wr": 0
+   },
+   "concept": "PUNT",
+   "run_direction": null,
+   "protection": "DEFAULT",
+   "motion": null,
+   "read_progression": [],
+   "aggressiveness": 0.1,
+   "description": "4th down punt to pin opponent."
+  },
+  {
+   "call_id": "KNL",
+   "name": "Victory Kneel",
+   "category": "SPECIAL_TEAMS",
+   "formation": "SPECIAL_UNITS",
+   "personnel": {
+    "rb": 0,
+    "te": 0,
+    "wr": 0
+   },
+   "concept": "QB_KNEEL",
+   "run_direction": "MIDDLE",
+   "protection": "DEFAULT",
+   "motion": null,
+   "read_progression": [],
+   "aggressiveness": 0.0,
+   "description": "Kneel to safely bleed 40 seconds."
+  },
+  {
+   "call_id": "SPK",
+   "name": "Clock Spike",
+   "category": "SPECIAL_TEAMS",
+   "formation": "SHOTGUN_11_SPREAD",
+   "personnel": {
+    "rb": 1,
+    "te": 1,
+    "wr": 3
+   },
+   "concept": "QB_SPIKE",
+   "run_direction": null,
+   "protection": "DEFAULT",
+   "motion": null,
+   "read_progression": [],
+   "aggressiveness": 0.0,
+   "description": "Spike into turf to stop the clock."
+  }
+ ]
+}
