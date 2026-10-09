@@ -26,8 +26,12 @@ func _init() -> void:
 		q._on_bet_row(2)
 		q._on_stake(1.0)
 		q._on_show()
+		await _wait(0.6)
+		_shot("s0a_versus_in" if q.last_res.win == 1 else "s0a_versus_loss_in")
+		await _wait(0.9)
+		_shot("s0b_versus_stamp" if q.last_res.win == 1 else "s0b_versus_loss_stamp")
 		if q.last_res.win == 1:
-			await _wait(1.6)
+			await _wait(1.7)
 			_shot("s1_wheel_spin")
 			await _wait(1.9)
 			_shot("s2_wheel_landed")
@@ -40,7 +44,7 @@ func _init() -> void:
 			print("win: ", q.last_res.event, " yards ", q.last_res.yards, " delta ", q.last_res.delta)
 			quit()
 			return
-		await _wait(2.6)
+		await _wait(2.4)
 		if attempt == 0:
 			_shot("s0_loss_result")
 		if q.g.phase == "RESULT":

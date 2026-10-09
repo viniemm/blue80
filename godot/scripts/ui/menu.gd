@@ -20,7 +20,10 @@ func _ready() -> void:
 	_items.append(["QUIT", "quit", Px.DIM])
 	for i in _items.size():
 		var b := add_btn(_items[i][0], _items[i][2], Rect2(80, 214 + i * 40, 200, 30), func(): go.emit(_items[i][1]))
-		b.mouse_entered.connect(func(): hot = i)
+		b.mouse_entered.connect(func():
+			if hot != i:
+				hot = i
+				Sfx.play("tick"))
 
 
 func _paint() -> void:
@@ -45,8 +48,10 @@ func _unhandled_key_input(e: InputEvent) -> void:
 	match e.keycode:
 		KEY_UP:
 			hot = posmod(hot - 1, _items.size())
+			Sfx.play("tick")
 		KEY_DOWN:
 			hot = posmod(hot + 1, _items.size())
+			Sfx.play("tick")
 		KEY_ENTER, KEY_KP_ENTER, KEY_SPACE:
 			go.emit(_items[hot][1])
 		KEY_ESCAPE:

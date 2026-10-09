@@ -54,6 +54,10 @@ func _show(s: Control) -> void:
 		if screen != game:
 			screen.queue_free()
 	screen = s
+	if s is QMain:
+		Sfx.play_music("game")
+	elif not (s is SplashScreen):
+		Sfx.play_music("menu")
 	add_child(s)
 	move_child(s, 0)
 
@@ -96,6 +100,7 @@ func _new_game() -> Control:
 
 
 func _apply_settings() -> void:
+	Sfx.apply_settings()
 	overlay.lines = bool(Save.setting("scanlines", true))
 	overlay.queue_redraw()
 	var want_full: bool = bool(Save.setting("fullscreen", false))

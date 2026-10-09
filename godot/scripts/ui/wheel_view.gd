@@ -45,6 +45,8 @@ var marks: Array = []          # fractions of the circle where a bet line sits (
 var _tw: Tween
 var _final_angle := 0.0
 var _land_idx := 0
+var _last_tick := 0
+var _last_tick_t := 0.0
 
 
 func _init(size_px: int = 132) -> void:
@@ -201,6 +203,12 @@ func _process(delta: float) -> void:
 	_t += delta
 	_vel = (angle - _last_angle) / maxf(delta, 0.001)
 	_last_angle = angle
+	if spinning:
+		var ti := int(floorf(angle / TAU * 40.0))
+		if ti != _last_tick and _t - _last_tick_t > 0.03:
+			Sfx.play("wheel_tick", 0.0, 0.04)
+			_last_tick_t = _t
+		_last_tick = ti
 	var since := _t - _landed_at
 	_mat.set_shader_parameter("pulse", 0.22 * sin(since * 14.0) * clampf(1.0 - since / 1.6, 0.0, 1.0) if since < 1.6 else 0.0)
 	_overlay.queue_redraw()

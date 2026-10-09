@@ -26,6 +26,14 @@ Manage Export Templates), then `cd godot` and run `godot --headless --export-rel
 serve `build/web` with any static server. Records and settings are kept in the browser's storage on the device.
 The home-screen icon is `godot/icon.png`, drawn by `tests/make_icon.gd`.
 
+## Sound
+
+All audio is synthesized, with no recorded samples: `godot --headless --path godot -s tests/make_audio.gd` renders 25 sound
+effects and two chiptune music loops (menu and in-game) into `godot/assets/audio/`, then run `godot --headless --path godot --import`.
+`Sfx.play("click")` and `Sfx.play_music("game")` (`scripts/audio/sfx.gd`) play them; Settings has SOUND EFFECTS and MUSIC toggles, and
+the app mutes itself in the background. Per-sound loudness is the `LEVELS` table in the generator; master levels are `SFX_DB` and
+`MUSIC_DB` in `sfx.gd`. On iOS the first tap (the splash screen) unlocks audio.
+
 ## Menus and flow
 
 `scenes/app.tscn` is the entry point: an animated splash (any tap or key skips it) fades into the main menu (PLAY or
@@ -50,7 +58,8 @@ Each down:
    card or press `P`. Each card shows a `+` strength and a `-` weakness (the defense styles it beats and loses to);
    tap the (i) badge on a card (or hold it, or right-click) for its formation, routes and yards by defense. Ante is the forced one-chip hand
    stake (won or lost times the hand multipliers); the optional bet only plays on a won hand; `NO BET` is ante only.
-4. **Showdown.** Win the hand and your play spins on an outcome wheel (wedges sized by the play's real odds, a gold
+4. **Showdown.** A versus banner pits your hand against the defense's and stamps YOU WIN, DEFENSE WINS or PUSH.
+   Win the hand and your play spins on an outcome wheel (wedges sized by the play's real odds, a gold
    tick marking your bet line), then runs: yards come from the card's curve, bent by the defense's hidden
    style (the suit of its lead card: BLITZ, ZONE, MAN or BALANCED), and the bet settles on those yards. Lose the hand
    and the bet is refunded, but the defense's hand decides the damage (a stuff, loss, sack, fumble or pick six).

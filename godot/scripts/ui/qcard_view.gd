@@ -54,6 +54,8 @@ var marked := false:
 		marked = v
 		queue_redraw()
 		_update_lift()
+		if v:
+			Sfx.play("mark", 0.0, 0.05)
 var highlight := false:
 	set(v):
 		if v == highlight:
@@ -121,6 +123,7 @@ func deal_in(from: Vector2, delay: float, flip_up: bool) -> void:
 	face_up = false
 	_flip_target = false
 	_dealing = true
+	Sfx.play("deal", delay, 0.08)
 	var spin := randf_range(-0.7, 0.7)
 	position = from
 	rotation = spin
@@ -155,6 +158,7 @@ func flip_to(up: bool, delay: float = 0.0) -> void:
 	if up == _flip_target:
 		return
 	_flip_target = up
+	Sfx.play("flip", delay, 0.05)
 	if _t_flip:
 		_t_flip.kill()
 	_t_flip = create_tween()
@@ -355,11 +359,20 @@ func _draw() -> void:
 		_draw_twinkle(w, h)
 	elif tier == "GOLD":
 		_draw_twinkle(w, h)
-	if highlight:
+	if highlight and mode == "mine":
 		var pulse := 0.55 + 0.45 * sin(Time.get_ticks_msec() / 1000.0 * 6.0)
-		draw_rect(Rect2(0, 0, w, h), Color(Px.GOLD, pulse), false, 2.0)
+		draw_rect(Rect2(0, 0, w, h), Color(Px.GOLD, 0.12 + 0.12 * pulse))               # a warm wash over the whole card
+		draw_rect(Rect2(0, 0, w, h), Color(Px.GOLD, 0.6 + 0.4 * pulse), false, 3.0)
+		draw_rect(Rect2(3, h - 17, w - 6, 15), Px.GOLD)                                   # PLAY tag replaces the tier line
+		Px.text_center(self, w / 2.0, h - 16, "> PLAY <", 0, Color("0a0a1a"))
+	elif highlight:
+		var pulse2 := 0.55 + 0.45 * sin(Time.get_ticks_msec() / 1000.0 * 6.0)
+		draw_rect(Rect2(0, 0, w, h), Color(Px.GOLD, pulse2), false, 2.0)
 	if eligible and not highlight:
-		draw_rect(Rect2(0, 0, w, h), Color(Px.GOLD, 0.5), false, 1.0)
+		draw_rect(Rect2(0, 0, w, h), Color(Px.GOLD, 0.55), false, 2.0)
+		draw_rect(Rect2(3, h - 17, w - 6, 15), Color("0a0a1a"))
+		draw_rect(Rect2(3, h - 17, w - 6, 15), Color(Px.GOLD, 0.7), false, 1.0)
+		Px.text_center(self, w / 2.0, h - 16, "TAP TO PLAY", 0, Px.GOLD)
 	if flash_a > 0.0:
 		draw_rect(Rect2(0, 0, w, h), Color(flash_color, flash_a))
 	if dimmed:

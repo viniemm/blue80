@@ -7,9 +7,21 @@ const SETTLED := 2.8        # the animation is finished by here
 const AUTO := 7.0
 
 var _left := false
+var _blips := 0
+var _thud := false
 
 
 func _paint() -> void:
+	var letters := 0
+	for i in 7:
+		if i != 4 and t - 0.4 - i * 0.14 > 0.15:
+			letters += 1
+	if letters > _blips:
+		_blips = letters
+		Sfx.play("blip", 0.0, 0.05)
+	if t > 2.0 and not _thud:
+		_thud = true
+		Sfx.play("thud")
 	logo(W / 2.0, 190, 32, t)
 	var bar := clampf((t - 1.4) / 0.5, 0.0, 1.0)
 	var bw := 224.0 * bar
@@ -37,6 +49,7 @@ func _paint() -> void:
 func _leave() -> void:
 	if not _left:
 		_left = true
+		Sfx.play("start")
 		go.emit("menu")
 
 

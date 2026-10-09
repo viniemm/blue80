@@ -5,6 +5,8 @@ extends PxScreen
 signal changed
 
 const OPTIONS := [
+	["sfx", "SOUND EFFECTS", true],
+	["music", "MUSIC", true],
 	["scanlines", "CRT SCANLINES", true],
 	["counter", "SHOE COUNTER", true],
 	["fullscreen", "FULLSCREEN", false],
@@ -42,5 +44,5 @@ func _paint() -> void:
 	banner("SETTINGS")
 	for i in OPTIONS.size():
 		Px.text(self, 18, 82 + i * 44, OPTIONS[i][1], 2, Px.FG)
-	Px.text(self, 18, 82 + 3 * 44, "F11 also toggles fullscreen.", 0, Px.DIM)
-	Px.text(self, 18, 82 + 3 * 44 + 14, "The counter hides the cards-left strip while you play.", 0, Px.DIM)
+	Px.text(self, 18, 82 + OPTIONS.size() * 44, "F11 also toggles fullscreen.", 0, Px.DIM)
+	Px.text(self, 18, 82 + OPTIONS.size() * 44 + 14, "The counter hides the cards-left strip while you play.", 0, Px.DIM)

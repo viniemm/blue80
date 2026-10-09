@@ -33,6 +33,7 @@ var suspense_t := 0.0
 var focus_idx := -1                          # the card whose info shows in the bet panel while drawing
 var detail: CardDetail
 var btn_info: PxButton
+var versus: VersusFx
 var stage := ""                             # showdown beats: flip -> spin -> hold
 var pre_st: Dictionary = {}
 var wheel_layer: Control
@@ -200,6 +201,8 @@ func _new_mine(i: int, delay: float) -> QCardView:
 ## A full new deal: the old cards fly off to the left, ten new ones fly in from the shoe.
 func _rebuild_cards() -> void:
 	var old: Array = my_views + def_views
+	if not old.is_empty():
+		Sfx.play("swoosh")
 	for k in old.size():
 		old[k].fly_out(Vector2(-90, old[k].position.y), k * 0.02)
 	my_views = []
@@ -447,8 +450,14 @@ func _draw_result(c: Control) -> void:
 	else:
 		var y := 4
 		var head := "SHOWDOWN..." if suspense else "RECENT"
-		if g.phase == "BET" and g.eligible().size() > 1:
-			head = "CHOOSE YOUR PLAY: tap a gold-edged card (or press P)"
+		if g.phase == "BET" and not suspense:
+			var lead: Dictionary = g.my_lead()
+			Px.text(c, 6, 4, "YOUR PLAY", 0, Px.DIM)
+			Px.text(c, 6, 15, "%s  %s" % [lead.label, lead.name], 3, Px.GOLD)
+			var hint := "tap another gold-edged card to switch the play (or press P)" if g.eligible().size() > 1 else "only this card can run this hand"
+			Px.text(c, 6, 38, hint, 0, Px.DIM)
+			Px.text(c, 6, 52, "see its strengths and routes with INFO", 0, Px.DIM)
+			return
 		Px.text(c, 6, y, head, 1, Px.GOLD)
 		y += 18
 		for line in g.log.slice(0, 4) if g.phase == "BET" or g.phase == "DRAW" else g.log.slice(1, 3):
@@ -486,6 +495,7 @@ func _refresh() -> void:
 	for b in [btn_minus, btn_plus, btn_max, btn_nobet]:
 		b.visible = phase == "BET"
 	btn_next.visible = phase == "RESULT" and not suspense
+	btn_next.shine = btn_next.visible
 	if phase == "RESULT":
 		btn_next.set_label("NEXT DRIVE" if last_res.get("drive_over", false) else "NEXT DOWN")
 	var busted: bool = phase == "OVER" and not suspense
@@ -510,6 +520,8 @@ func _on_hand_tapped(i: int) -> void:
 		return
 	if g.phase == "BET":
 		if g.eligible().has(i):
+			if i != g.play_idx:
+				Sfx.play("select")
 			g.set_play(i)                              # choose which card in the made hand runs the play
 			_refresh()
 		return
@@ -553,6 +565,8 @@ func _on_stand() -> void:
 ## Discards fly off, replacements fly in from the shoe and flip, then two defense cards turn face-up.
 func _do_draw(idx: Array) -> void:
 	var before: Array = g.theirs.duplicate()
+	if not idx.is_empty():
+		Sfx.play("swoosh")
 	flip_base = 0.75 if not idx.is_empty() else 0.35
 	g.draw(idx)
 	marked = []
@@ -572,6 +586,7 @@ func _do_draw(idx: Array) -> void:
 func _on_bet_row(k: int) -> void:
 	if g.phase != "BET" or k < 0 or k > 4:
 		return
+	Sfx.play("choose")
 	if g.bet.line == k:
 		g.set_bet(-1, 0.0)
 	else:
@@ -585,6 +600,7 @@ func _on_bet_input(e: InputEvent) -> void:
 
 
 func _on_stake(delta: float) -> void:
+	Sfx.play("tick")
 	stake = clampf(stake + delta, 0.5, maxf(0.5, g.max_stake()))
 	if g.bet.line >= 0:
 		g.set_bet(g.bet.line, stake)
@@ -610,13 +626,34 @@ func _on_show() -> void:
 	last_res = g.showdown()
 	suspense = true
 	stage = "flip"
-	suspense_t = 0.9
+	suspense_t = 2.1                              # the defense cards flip, then the versus banner plays out
 	bank_hold = 99.0
 	_refresh()
+	_show_versus()
+
+
+## Banner comparing the two hands, ending in a WIN / LOSS stamp.
+func _show_versus() -> void:
+	if versus != null and is_instance_valid(versus):
+		versus.queue_free()
+	var r := last_res
+	var gap: int = int(r.their_cat) - int(r.my_cat)
+	var note := ""
+	if r.win == 1:
+		note = "ante x%.1f. Your play runs" % Poker.multiplier(int(r.my_cat))
+	elif r.win == -1:
+		note = ("same hand, higher cards: %s" % r.event) if gap <= 0 else ("beaten by %d hand class%s: %s" % [gap, "" if gap == 1 else "es", r.event])
+	else:
+		note = "identical hands, nobody moves"
+	versus = VersusFx.new(Poker.CAT_NAMES[int(r.my_cat)], Poker.multiplier(int(r.my_cat)), Poker.CAT_NAMES[int(r.their_cat)],
+			Poker.multiplier(int(r.their_cat)), int(r.win), note)
+	fx_layer.add_child(versus)
 
 
 ## A won hand puts the play's curve on a wheel and spins it: the randomness made visible.
 func _start_wheel() -> void:
+	if versus != null and is_instance_valid(versus):
+		versus.finish()
 	stage = "spin"
 	wheel_done = false
 	var lead: Dictionary = last_res.my_lead
@@ -634,6 +671,7 @@ func _start_wheel() -> void:
 
 
 func _on_wheel_landed() -> void:
+	Sfx.play("land")
 	wheel_done = true
 	stage = "hold"
 	suspense_t = 1.3
@@ -682,6 +720,8 @@ func _fx_result() -> void:
 	stage = ""
 	bank_hold = 0.0
 	wheel_layer.visible = false
+	if versus != null and is_instance_valid(versus):
+		versus.finish()
 	var r := last_res
 	field.animate_result(pre_st, g.st, r)
 	_refresh()
@@ -694,6 +734,15 @@ func _fx_result() -> void:
 		lead.shake(6.0)
 		lead.flash(Px.RED)
 	var evt: String = r.event
+	match evt:
+		"TOUCHDOWN": Sfx.play("touchdown")
+		"FIRST DOWN": Sfx.play("first_down")
+		"SACKED": Sfx.play("sack")
+		"FUMBLE", "PICK SIX", "TURNOVER", "SAFETY", "TURNOVER ON DOWNS": Sfx.play("turnover")
+	if g.phase == "OVER":
+		Sfx.play("bust", 0.6)
+	elif absf(r.delta) >= 0.05:
+		Sfx.play("chip_up" if good else "chip_down", 0.35)
 	_float("%+.1f" % r.delta, Px.GREEN if good else Px.RED, 3, 316)
 	if evt == "TOUCHDOWN":
 		_float("TOUCHDOWN  +%d CHIPS" % int(QGame.TD_BONUS), Px.GOLD, 2, 292)
