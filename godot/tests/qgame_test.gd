@@ -11,23 +11,34 @@ func _policy_flat(g: QGame) -> void:
 	g.set_bet(2, minf(2.0, g.max_stake()))
 
 
-## Cheats by peeking at the hidden style: an upper bound on what reading the defense can earn.
-func _policy_informed(g: QGame) -> void:
-	var lead := g.my_lead()
-	var th := DefContext.apply(lead.theta, g.hidden_style())
-	var m := g.my_mult()
-	var best := -1
-	var best_ev := 0.0
-	for k in 5:
-		var ev := g.lines.ev_per_chip(YardCurve.survival(th, g.lines.threshold(lead, k)), lead, k, m)
-		if ev > best_ev:
-			best_ev = ev
-			best = k
-	if best < 0:
+## Best (card, line) for a policy: tries every card that may be the play and every line, using `true_s` for the
+## chance of clearing. Returns {idx, line, s, ev}.
+func _best(g: QGame, true_s: Callable, choose: bool = true) -> Dictionary:
+	var best := {"idx": g.play_idx, "line": -1, "s": 0.0, "ev": 0.0}
+	var m := g.bet_mult()
+	for i in (g.eligible() if choose else [g.play_idx]):
+		var c: Dictionary = g.mine[i]
+		for k in 5:
+			var s: float = true_s.call(c, k)
+			var ev := g.lines.ev_per_chip(s, c, k, m)
+			if ev > float(best.ev):
+				best = {"idx": i, "line": k, "s": s, "ev": ev}
+	return best
+
+
+func _place(g: QGame, b: Dictionary) -> void:
+	g.set_play(int(b.idx))
+	if int(b.line) < 0:
 		g.set_bet(-1, 0.0)
 		return
-	var s := YardCurve.survival(th, g.lines.threshold(lead, best))
-	g.set_bet(best, minf(0.5 * g.lines.kelly(s, lead, best, m) * g.bankroll, g.max_stake()))
+	var c := g.my_lead()
+	g.set_bet(int(b.line), minf(0.5 * g.lines.kelly(float(b.s), c, int(b.line), g.bet_mult()) * g.bankroll, g.max_stake()))
+
+
+## Cheats by peeking at the hidden style: an upper bound on what reading the defense can earn.
+func _policy_informed(g: QGame) -> void:
+	var style := g.hidden_style()
+	_place(g, _best(g, func(c, k): return YardCurve.survival(DefContext.apply(c.theta, style), g.lines.threshold(c, k))))
 
 
 var _arng := RandomNumberGenerator.new()
@@ -49,7 +60,7 @@ func _posterior(g: QGame, n: int) -> Dictionary:
 		var ev := Poker.evaluate(hand)
 		if ev.score >= g.my_eval.score:
 			continue
-		counts[g.style_of(ev.lead)] += 1
+		counts[QGame.STYLE_OF_SUIT[ev.lead_suit]] += 1
 		kept += 1
 	var out := {}
 	for k in counts:
@@ -57,27 +68,33 @@ func _posterior(g: QGame, n: int) -> Dictionary:
 	return out
 
 
-## What a quant does without cheating: price each line against the posterior over styles.
+## What a quant does without cheating: price each card and line against the posterior over styles.
 func _policy_analyst(g: QGame) -> void:
 	var post := _posterior(g, 150)
-	var lead := g.my_lead()
-	var m := g.my_mult()
-	var best := -1
-	var best_ev := 0.0
-	var best_s := 0.0
-	for k in 5:
+	_place(g, _best(g, func(c, k):
 		var s := 0.0
 		for style in post:
-			s += float(post[style]) * YardCurve.survival(DefContext.apply(lead.theta, style), g.lines.threshold(lead, k))
-		var ev := g.lines.ev_per_chip(s, lead, k, m)
-		if ev > best_ev:
-			best_ev = ev
-			best = k
-			best_s = s
-	if best < 0:
-		g.set_bet(-1, 0.0)
-		return
-	g.set_bet(best, minf(0.5 * g.lines.kelly(best_s, lead, best, m) * g.bankroll, g.max_stake()))
+			s += float(post[style]) * YardCurve.survival(DefContext.apply(c.theta, style), g.lines.threshold(c, k))
+		return s))
+
+
+## Same pricing as the analyst but with a uniform prior (no read of the face-up cards): the hand-strength-only strategy.
+func _policy_no_read(g: QGame) -> void:
+	_place(g, _best(g, func(c, k):
+		var s := 0.0
+		for style in DefContext.STYLES:
+			s += 0.25 * YardCurve.survival(DefContext.apply(c.theta, style), g.lines.threshold(c, k))
+		return s, false))
+
+
+## Reads the face-up cards but always runs the default play (no choosing).
+func _policy_read_only(g: QGame) -> void:
+	var post := _posterior(g, 150)
+	_place(g, _best(g, func(c, k):
+		var s := 0.0
+		for style in post:
+			s += float(post[style]) * YardCurve.survival(DefContext.apply(c.theta, style), g.lines.threshold(c, k))
+		return s, false))
 
 
 func _run(name: String, policy: Callable, rounds: int) -> void:
@@ -119,9 +136,14 @@ func _run(name: String, policy: Callable, rounds: int) -> void:
 
 
 func _init() -> void:
-	print("\n=== QGame economy check (12,000 snaps per policy, identical hands, style strength %.1f, vig %.0f%%) ===" % [QGame.STYLE_STRENGTH, QGame.VIG * 100.0])
-	_run("draw only, no bets", _policy_none, 12000)
-	_run("flat MEDIUM x2", _policy_flat, 12000)
-	_run("analyst (2 face-up cards)", _policy_analyst, 12000)
-	_run("informed (peeks style)", _policy_informed, 12000)
+	var n := int(OS.get_cmdline_user_args()[0]) if OS.get_cmdline_user_args().size() > 0 else 12000
+	if OS.get_cmdline_user_args().size() > 1:
+		QGame.bet_k = float(OS.get_cmdline_user_args()[1])
+	print("\n=== QGame economy check (%d snaps per policy, identical hands, style strength %.1f, vig %.0f%%) ===" % [n, QGame.STYLE_STRENGTH, QGame.VIG * 100.0])
+	_run("draw only, no bets", _policy_none, n)
+	_run("flat MEDIUM x2", _policy_flat, n)
+	_run("hand strength only", _policy_no_read, n)
+	_run("+ read face-up cards", _policy_read_only, n)
+	_run("+ choose the play", _policy_analyst, n)
+	_run("informed (peeks style)", _policy_informed, n)
 	quit()

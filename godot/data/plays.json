@@ -1,0 +1,1041 @@
+{
+ "formations": {
+  "GOAL_LINE": {
+   "label": "GOAL LINE",
+   "players": [
+    {
+     "id": "qb",
+     "pos": "QB",
+     "x": -1,
+     "y": 0
+    },
+    {
+     "id": "fb",
+     "pos": "FB",
+     "x": -3,
+     "y": 0
+    },
+    {
+     "id": "rb",
+     "pos": "RB",
+     "x": -5,
+     "y": 0
+    },
+    {
+     "id": "te",
+     "pos": "TE",
+     "x": 0,
+     "y": 10
+    },
+    {
+     "id": "te2",
+     "pos": "TE",
+     "x": 0,
+     "y": -10
+    },
+    {
+     "id": "wr_z",
+     "pos": "WR",
+     "x": 0,
+     "y": 24
+    }
+   ]
+  },
+  "I_FORM": {
+   "label": "I-FORM",
+   "players": [
+    {
+     "id": "qb",
+     "pos": "QB",
+     "x": -2,
+     "y": 0
+    },
+    {
+     "id": "fb",
+     "pos": "FB",
+     "x": -5,
+     "y": 0
+    },
+    {
+     "id": "rb",
+     "pos": "RB",
+     "x": -7,
+     "y": 0
+    },
+    {
+     "id": "te",
+     "pos": "TE",
+     "x": 0,
+     "y": 11
+    },
+    {
+     "id": "wr_x",
+     "pos": "WR",
+     "x": 0,
+     "y": -24
+    },
+    {
+     "id": "wr_z",
+     "pos": "WR",
+     "x": 0,
+     "y": 24
+    }
+   ]
+  },
+  "SINGLEBACK": {
+   "label": "SINGLEBACK",
+   "players": [
+    {
+     "id": "qb",
+     "pos": "QB",
+     "x": -2,
+     "y": 0
+    },
+    {
+     "id": "rb",
+     "pos": "RB",
+     "x": -6,
+     "y": 0
+    },
+    {
+     "id": "te",
+     "pos": "TE",
+     "x": 0,
+     "y": 11
+    },
+    {
+     "id": "wr_x",
+     "pos": "WR",
+     "x": 0,
+     "y": -24
+    },
+    {
+     "id": "wr_s",
+     "pos": "WR",
+     "x": -1,
+     "y": -14
+    },
+    {
+     "id": "wr_z",
+     "pos": "WR",
+     "x": 0,
+     "y": 24
+    }
+   ]
+  },
+  "PISTOL": {
+   "label": "PISTOL",
+   "players": [
+    {
+     "id": "qb",
+     "pos": "QB",
+     "x": -3,
+     "y": 0
+    },
+    {
+     "id": "rb",
+     "pos": "RB",
+     "x": -6,
+     "y": 0
+    },
+    {
+     "id": "te",
+     "pos": "TE",
+     "x": 0,
+     "y": 11
+    },
+    {
+     "id": "wr_x",
+     "pos": "WR",
+     "x": 0,
+     "y": -24
+    },
+    {
+     "id": "wr_s",
+     "pos": "WR",
+     "x": -1,
+     "y": 16
+    },
+    {
+     "id": "wr_z",
+     "pos": "WR",
+     "x": 0,
+     "y": 25
+    }
+   ]
+  },
+  "SHOTGUN_SPREAD": {
+   "label": "SHOTGUN 4-WIDE",
+   "players": [
+    {
+     "id": "qb",
+     "pos": "QB",
+     "x": -4,
+     "y": 0
+    },
+    {
+     "id": "rb",
+     "pos": "RB",
+     "x": -4,
+     "y": 4
+    },
+    {
+     "id": "wr_x",
+     "pos": "WR",
+     "x": 0,
+     "y": -26
+    },
+    {
+     "id": "wr_s1",
+     "pos": "WR",
+     "x": -1,
+     "y": -15
+    },
+    {
+     "id": "wr_s2",
+     "pos": "WR",
+     "x": -1,
+     "y": 15
+    },
+    {
+     "id": "wr_z",
+     "pos": "WR",
+     "x": 0,
+     "y": 26
+    }
+   ]
+  },
+  "SHOTGUN_TRIPS": {
+   "label": "SHOTGUN TRIPS",
+   "players": [
+    {
+     "id": "qb",
+     "pos": "QB",
+     "x": -4,
+     "y": 0
+    },
+    {
+     "id": "rb",
+     "pos": "RB",
+     "x": -4,
+     "y": -4
+    },
+    {
+     "id": "wr_x",
+     "pos": "WR",
+     "x": 0,
+     "y": -26
+    },
+    {
+     "id": "wr_s1",
+     "pos": "WR",
+     "x": -1,
+     "y": 9
+    },
+    {
+     "id": "wr_s2",
+     "pos": "WR",
+     "x": -1,
+     "y": 17
+    },
+    {
+     "id": "wr_z",
+     "pos": "WR",
+     "x": 0,
+     "y": 26
+    }
+   ]
+  },
+  "JET_MOTION": {
+   "label": "JET MOTION",
+   "players": [
+    {
+     "id": "qb",
+     "pos": "QB",
+     "x": -4,
+     "y": 0
+    },
+    {
+     "id": "rb",
+     "pos": "RB",
+     "x": -4,
+     "y": 4
+    },
+    {
+     "id": "wr_s",
+     "pos": "WR",
+     "x": -2,
+     "y": -14
+    },
+    {
+     "id": "wr_x",
+     "pos": "WR",
+     "x": 0,
+     "y": -26
+    },
+    {
+     "id": "wr_z",
+     "pos": "WR",
+     "x": 0,
+     "y": 26
+    },
+    {
+     "id": "te",
+     "pos": "TE",
+     "x": 0,
+     "y": 11
+    }
+   ]
+  },
+  "WILDCAT": {
+   "label": "WILDCAT",
+   "players": [
+    {
+     "id": "rb",
+     "pos": "RB",
+     "x": -4,
+     "y": 0
+    },
+    {
+     "id": "qb",
+     "pos": "QB",
+     "x": -1,
+     "y": -18
+    },
+    {
+     "id": "te",
+     "pos": "TE",
+     "x": 0,
+     "y": 11
+    },
+    {
+     "id": "wr_x",
+     "pos": "WR",
+     "x": 0,
+     "y": -26
+    },
+    {
+     "id": "wr_z",
+     "pos": "WR",
+     "x": 0,
+     "y": 26
+    },
+    {
+     "id": "wr_s",
+     "pos": "WR",
+     "x": -1,
+     "y": 14
+    }
+   ]
+  }
+ },
+ "plays": [
+  {
+   "suit": "RUN",
+   "rank": 2,
+   "name": "QB SNEAK",
+   "formation": "GOAL_LINE",
+   "routes": {
+    "qb": "SNEAK"
+   },
+   "summary": "QB follows the center for a yard or two. Rarely loses, rarely wins big.",
+   "strong": "MAN",
+   "weak": "BLITZ"
+  },
+  {
+   "suit": "RUN",
+   "rank": 3,
+   "name": "FB DIVE",
+   "formation": "I_FORM",
+   "routes": {
+    "fb": "DIVE"
+   },
+   "summary": "Fullback hits the A-gap behind the guards. Short and steady.",
+   "strong": "ZONE",
+   "weak": "BLITZ"
+  },
+  {
+   "suit": "RUN",
+   "rank": 4,
+   "name": "DRAW",
+   "formation": "SHOTGUN_SPREAD",
+   "routes": {
+    "rb": "DRAW"
+   },
+   "summary": "Fake pass, then the back runs through the vacated middle. Punishes a rush.",
+   "strong": "BLITZ",
+   "weak": "ZONE"
+  },
+  {
+   "suit": "RUN",
+   "rank": 5,
+   "name": "COUNTER",
+   "formation": "SINGLEBACK",
+   "routes": {
+    "rb": "COUNTER_R"
+   },
+   "summary": "Guards pull while the back steps away first. Beats over-pursuing blitzers.",
+   "strong": "BLITZ",
+   "weak": "MAN"
+  },
+  {
+   "suit": "RUN",
+   "rank": 6,
+   "name": "TRAP",
+   "formation": "SINGLEBACK",
+   "routes": {
+    "rb": "DIVE"
+   },
+   "summary": "Let a lineman cross the line, then trap him with a pulling guard.",
+   "strong": "BLITZ",
+   "weak": "ZONE"
+  },
+  {
+   "suit": "RUN",
+   "rank": 7,
+   "name": "INSIDE ZONE",
+   "formation": "SINGLEBACK",
+   "routes": {
+    "rb": "DIVE_R"
+   },
+   "summary": "Everyone blocks an area and the back reads the cut. A staple.",
+   "strong": "MAN",
+   "weak": "BLITZ"
+  },
+  {
+   "suit": "RUN",
+   "rank": 8,
+   "name": "OUTSIDE ZONE",
+   "formation": "SINGLEBACK",
+   "routes": {
+    "rb": "SWEEP_R"
+   },
+   "summary": "Stretch toward the edge, then cut upfield on the best lane.",
+   "strong": "MAN",
+   "weak": "ZONE"
+  },
+  {
+   "suit": "RUN",
+   "rank": 9,
+   "name": "POWER O",
+   "formation": "I_FORM",
+   "routes": {
+    "fb": "BLOCK",
+    "rb": "TACKLE_R"
+   },
+   "summary": "Fullback kicks out the end, a guard pulls, the back follows. Smash-mouth.",
+   "strong": "ZONE",
+   "weak": "BLITZ"
+  },
+  {
+   "suit": "RUN",
+   "rank": 10,
+   "name": "STRETCH",
+   "formation": "PISTOL",
+   "routes": {
+    "rb": "SWEEP_L"
+   },
+   "summary": "Wide zone to the left: speed to the edge with a cutback lane.",
+   "strong": "BLITZ",
+   "weak": "ZONE"
+  },
+  {
+   "suit": "RUN",
+   "rank": 11,
+   "name": "TOSS SWEEP",
+   "formation": "I_FORM",
+   "routes": {
+    "rb": "SWEEP_R"
+   },
+   "summary": "Quick pitch to the outside with a convoy of blockers.",
+   "strong": "MAN",
+   "weak": "ZONE"
+  },
+  {
+   "suit": "RUN",
+   "rank": 12,
+   "name": "ISO LEAD",
+   "formation": "I_FORM",
+   "routes": {
+    "fb": "BLOCK",
+    "rb": "DIVE"
+   },
+   "summary": "Fullback isolates the linebacker and the back follows him through.",
+   "strong": "ZONE",
+   "weak": "MAN"
+  },
+  {
+   "suit": "RUN",
+   "rank": 13,
+   "name": "COUNTER TREY",
+   "formation": "SINGLEBACK",
+   "routes": {
+    "rb": "COUNTER_L"
+   },
+   "summary": "Two pullers lead a counter back the other way. High upside.",
+   "strong": "BLITZ",
+   "weak": "MAN"
+  },
+  {
+   "suit": "RUN",
+   "rank": 14,
+   "name": "JET SWEEP",
+   "formation": "JET_MOTION",
+   "routes": {
+    "wr_s": "SWEEP_R"
+   },
+   "summary": "A receiver in motion takes the handoff at full speed. Beats a slow edge.",
+   "strong": "MAN",
+   "weak": "ZONE"
+  },
+  {
+   "suit": "RPO",
+   "rank": 2,
+   "name": "RPO SLANT",
+   "formation": "SHOTGUN_SPREAD",
+   "routes": {
+    "rb": "DIVE",
+    "wr_x": "SLANT:6"
+   },
+   "summary": "Handoff or quick slant, decided by one linebacker. Cheap and safe.",
+   "strong": "BLITZ",
+   "weak": "ZONE"
+  },
+  {
+   "suit": "RPO",
+   "rank": 3,
+   "name": "RPO BUBBLE",
+   "formation": "SHOTGUN_TRIPS",
+   "routes": {
+    "rb": "DIVE",
+    "wr_s2": "SCREEN:3"
+   },
+   "summary": "Handoff or a bubble screen to the slot behind a wall of blockers.",
+   "strong": "BLITZ",
+   "weak": "MAN"
+  },
+  {
+   "suit": "RPO",
+   "rank": 4,
+   "name": "RPO FLAT",
+   "formation": "SHOTGUN_SPREAD",
+   "routes": {
+    "rb": "DIVE",
+    "wr_s2": "FLAT:3"
+   },
+   "summary": "Run if the box is light, otherwise flip it to the flat.",
+   "strong": "BLITZ",
+   "weak": "ZONE"
+  },
+  {
+   "suit": "RPO",
+   "rank": 5,
+   "name": "READ OPTION",
+   "formation": "PISTOL",
+   "routes": {
+    "qb": "READ_R",
+    "rb": "DIVE"
+   },
+   "summary": "QB reads the end: give to the back or keep and run.",
+   "strong": "BLITZ",
+   "weak": "ZONE"
+  },
+  {
+   "suit": "RPO",
+   "rank": 6,
+   "name": "ZONE READ",
+   "formation": "SHOTGUN_SPREAD",
+   "routes": {
+    "qb": "READ_L",
+    "rb": "DIVE_R"
+   },
+   "summary": "Inside zone with a QB keeper if the end crashes.",
+   "strong": "BLITZ",
+   "weak": "MAN"
+  },
+  {
+   "suit": "RPO",
+   "rank": 7,
+   "name": "INVERTED VEER",
+   "formation": "SHOTGUN_SPREAD",
+   "routes": {
+    "qb": "READ_R",
+    "rb": "SWEEP_R"
+   },
+   "summary": "The back runs wide while the QB reads a linebacker. Counters pursuit.",
+   "strong": "ZONE",
+   "weak": "BLITZ"
+  },
+  {
+   "suit": "RPO",
+   "rank": 8,
+   "name": "SPEED OPTION",
+   "formation": "PISTOL",
+   "routes": {
+    "qb": "OPTION_R"
+   },
+   "summary": "Pitch or keep on the edge. Needs fast skill players.",
+   "strong": "MAN",
+   "weak": "ZONE"
+  },
+  {
+   "suit": "RPO",
+   "rank": 9,
+   "name": "TRIPLE OPTION",
+   "formation": "PISTOL",
+   "routes": {
+    "qb": "OPTION_R",
+    "rb": "DIVE"
+   },
+   "summary": "Dive, keep or pitch: one read, three outcomes.",
+   "strong": "BLITZ",
+   "weak": "ZONE"
+  },
+  {
+   "suit": "RPO",
+   "rank": 10,
+   "name": "PACKAGED HITCH",
+   "formation": "SHOTGUN_TRIPS",
+   "routes": {
+    "rb": "DIVE",
+    "wr_z": "HITCH:5",
+    "wr_x": "HITCH:5"
+   },
+   "summary": "A run with hitch routes packaged outside. Beats soft corners.",
+   "strong": "BLITZ",
+   "weak": "ZONE"
+  },
+  {
+   "suit": "RPO",
+   "rank": 11,
+   "name": "RPO GLANCE",
+   "formation": "SHOTGUN_SPREAD",
+   "routes": {
+    "rb": "DIVE",
+    "wr_s1": "SLANT:8"
+   },
+   "summary": "A glance route over the middle if the linebacker bites on the run.",
+   "strong": "ZONE",
+   "weak": "MAN"
+  },
+  {
+   "suit": "RPO",
+   "rank": 12,
+   "name": "RPO SEAM",
+   "formation": "SHOTGUN_TRIPS",
+   "routes": {
+    "rb": "DIVE",
+    "wr_s1": "SEAM:14"
+   },
+   "summary": "A seam route runs past a flat-footed safety when the box fills.",
+   "strong": "MAN",
+   "weak": "ZONE"
+  },
+  {
+   "suit": "RPO",
+   "rank": 13,
+   "name": "OPTION PASS",
+   "formation": "PISTOL",
+   "routes": {
+    "qb": "OPTION_R",
+    "wr_z": "CORNER:12"
+   },
+   "summary": "Looks like option, then the QB throws deep instead.",
+   "strong": "ZONE",
+   "weak": "BLITZ"
+  },
+  {
+   "suit": "RPO",
+   "rank": 14,
+   "name": "FULL FLOW",
+   "formation": "SHOTGUN_TRIPS",
+   "routes": {
+    "rb": "SWEEP_R",
+    "wr_z": "GO:14",
+    "wr_s2": "CORNER:12"
+   },
+   "summary": "Run and routes flow one way and the QB picks run or pass.",
+   "strong": "ZONE",
+   "weak": "BLITZ"
+  },
+  {
+   "suit": "PASS",
+   "rank": 2,
+   "name": "DUMP OFF",
+   "formation": "SHOTGUN_SPREAD",
+   "routes": {
+    "rb": "FLAT:2"
+   },
+   "summary": "Check it down to the back. Safe, small, and always there.",
+   "strong": "BLITZ",
+   "weak": "ZONE"
+  },
+  {
+   "suit": "PASS",
+   "rank": 3,
+   "name": "SWING",
+   "formation": "SHOTGUN_SPREAD",
+   "routes": {
+    "rb": "SWING:4"
+   },
+   "summary": "The back swings out of the backfield into the flat.",
+   "strong": "BLITZ",
+   "weak": "ZONE"
+  },
+  {
+   "suit": "PASS",
+   "rank": 4,
+   "name": "HITCH",
+   "formation": "SHOTGUN_SPREAD",
+   "routes": {
+    "wr_x": "HITCH:6",
+    "wr_z": "HITCH:6"
+   },
+   "summary": "Receivers stop and turn at six yards. Beats off coverage.",
+   "strong": "ZONE",
+   "weak": "MAN"
+  },
+  {
+   "suit": "PASS",
+   "rank": 5,
+   "name": "STICK",
+   "formation": "SHOTGUN_TRIPS",
+   "routes": {
+    "wr_s1": "HITCH:5",
+    "wr_s2": "FLAT:2",
+    "wr_z": "GO:10"
+   },
+   "summary": "A quick stop route with a flat option. A clean read against zone.",
+   "strong": "ZONE",
+   "weak": "BLITZ"
+  },
+  {
+   "suit": "PASS",
+   "rank": 6,
+   "name": "CURL FLAT",
+   "formation": "SINGLEBACK",
+   "routes": {
+    "wr_x": "CURL:10",
+    "rb": "FLAT:2"
+   },
+   "summary": "The curl holds the corner and the flat clears underneath.",
+   "strong": "ZONE",
+   "weak": "MAN"
+  },
+  {
+   "suit": "PASS",
+   "rank": 7,
+   "name": "SLANTS",
+   "formation": "SHOTGUN_SPREAD",
+   "routes": {
+    "wr_x": "SLANT:7",
+    "wr_z": "SLANT:7"
+   },
+   "summary": "Quick inside breaks with the QB throwing on rhythm.",
+   "strong": "BLITZ",
+   "weak": "ZONE"
+  },
+  {
+   "suit": "PASS",
+   "rank": 8,
+   "name": "MESH",
+   "formation": "SHOTGUN_SPREAD",
+   "routes": {
+    "wr_s1": "CROSS:5",
+    "wr_s2": "CROSS:6"
+   },
+   "summary": "Two shallow crossers rub off defenders. A man-coverage killer.",
+   "strong": "MAN",
+   "weak": "ZONE"
+  },
+  {
+   "suit": "PASS",
+   "rank": 9,
+   "name": "SMASH",
+   "formation": "SHOTGUN_TRIPS",
+   "routes": {
+    "wr_z": "CORNER:12",
+    "wr_s2": "HITCH:5"
+   },
+   "summary": "High-low on the corner: a hitch under a corner route.",
+   "strong": "ZONE",
+   "weak": "BLITZ"
+  },
+  {
+   "suit": "PASS",
+   "rank": 10,
+   "name": "DAGGER",
+   "formation": "SHOTGUN_TRIPS",
+   "routes": {
+    "wr_s1": "SEAM:12",
+    "wr_s2": "IN:16"
+   },
+   "summary": "The seam clears the safety so the dig has room.",
+   "strong": "ZONE",
+   "weak": "BLITZ"
+  },
+  {
+   "suit": "PASS",
+   "rank": 11,
+   "name": "FLOOD",
+   "formation": "SHOTGUN_TRIPS",
+   "routes": {
+    "wr_z": "GO:14",
+    "wr_s2": "CORNER:12",
+    "rb": "FLAT:3"
+   },
+   "summary": "Three routes at three depths overload one side of the zone.",
+   "strong": "ZONE",
+   "weak": "BLITZ"
+  },
+  {
+   "suit": "PASS",
+   "rank": 12,
+   "name": "DIG",
+   "formation": "SINGLEBACK",
+   "routes": {
+    "wr_x": "IN:14",
+    "wr_z": "SEAM:10"
+   },
+   "summary": "A square-in at fifteen yards behind the linebackers.",
+   "strong": "MAN",
+   "weak": "BLITZ"
+  },
+  {
+   "suit": "PASS",
+   "rank": 13,
+   "name": "CORNER",
+   "formation": "SHOTGUN_SPREAD",
+   "routes": {
+    "wr_x": "CORNER:14",
+    "wr_s2": "CORNER:14"
+   },
+   "summary": "An outside break to the corner, over the safety.",
+   "strong": "ZONE",
+   "weak": "MAN"
+  },
+  {
+   "suit": "PASS",
+   "rank": 14,
+   "name": "LEVELS",
+   "formation": "SHOTGUN_TRIPS",
+   "routes": {
+    "wr_s1": "CROSS:7",
+    "wr_s2": "CROSS:12"
+   },
+   "summary": "Crossing routes at two levels. The QB picks the open one.",
+   "strong": "MAN",
+   "weak": "ZONE"
+  },
+  {
+   "suit": "SHOT",
+   "rank": 2,
+   "name": "FADE",
+   "formation": "SHOTGUN_SPREAD",
+   "routes": {
+    "wr_x": "GO:20"
+   },
+   "summary": "Throw it up to the back corner and let the receiver win it.",
+   "strong": "MAN",
+   "weak": "ZONE"
+  },
+  {
+   "suit": "SHOT",
+   "rank": 3,
+   "name": "BACK SHOULDER",
+   "formation": "SHOTGUN_SPREAD",
+   "routes": {
+    "wr_z": "GO:16"
+   },
+   "summary": "Throw behind the receiver, where only he can catch it.",
+   "strong": "MAN",
+   "weak": "ZONE"
+  },
+  {
+   "suit": "SHOT",
+   "rank": 4,
+   "name": "GO ROUTE",
+   "formation": "SHOTGUN_SPREAD",
+   "routes": {
+    "wr_x": "GO:25",
+    "wr_z": "GO:25"
+   },
+   "summary": "Pure speed down the sideline. Hit or miss.",
+   "strong": "BLITZ",
+   "weak": "ZONE"
+  },
+  {
+   "suit": "SHOT",
+   "rank": 5,
+   "name": "PA BOOT",
+   "formation": "SINGLEBACK",
+   "routes": {
+    "qb": "BOOT_R",
+    "te": "CROSS:8"
+   },
+   "summary": "Fake the handoff, roll out, find the tight end on a crosser.",
+   "strong": "BLITZ",
+   "weak": "MAN"
+  },
+  {
+   "suit": "SHOT",
+   "rank": 6,
+   "name": "PA POST",
+   "formation": "SINGLEBACK",
+   "routes": {
+    "wr_x": "POST:18"
+   },
+   "summary": "Play-action pulls the safeties up, then a post goes behind them.",
+   "strong": "BLITZ",
+   "weak": "ZONE"
+  },
+  {
+   "suit": "SHOT",
+   "rank": 7,
+   "name": "CORNER POST",
+   "formation": "SINGLEBACK",
+   "routes": {
+    "wr_x": "CORNER:20",
+    "wr_z": "POST:18"
+   },
+   "summary": "A corner/post combination pulls the safety two ways.",
+   "strong": "MAN",
+   "weak": "ZONE"
+  },
+  {
+   "suit": "SHOT",
+   "rank": 8,
+   "name": "WHEEL",
+   "formation": "SHOTGUN_SPREAD",
+   "routes": {
+    "rb": "WHEEL:20"
+   },
+   "summary": "The back runs a wheel up the sideline past the linebackers.",
+   "strong": "MAN",
+   "weak": "ZONE"
+  },
+  {
+   "suit": "SHOT",
+   "rank": 9,
+   "name": "SEAM SHOT",
+   "formation": "SHOTGUN_TRIPS",
+   "routes": {
+    "wr_s1": "SEAM:22"
+   },
+   "summary": "The slot sprints up the seam between the safeties.",
+   "strong": "MAN",
+   "weak": "ZONE"
+  },
+  {
+   "suit": "SHOT",
+   "rank": 10,
+   "name": "DOUBLE MOVE",
+   "formation": "SHOTGUN_SPREAD",
+   "routes": {
+    "wr_x": "DOUBLE:20"
+   },
+   "summary": "Stutter and go: sells the short route, then runs by.",
+   "strong": "BLITZ",
+   "weak": "ZONE"
+  },
+  {
+   "suit": "SHOT",
+   "rank": 11,
+   "name": "PA DEEP OVER",
+   "formation": "SINGLEBACK",
+   "routes": {
+    "wr_x": "CROSS:18"
+   },
+   "summary": "Play-action opens a deep crosser over the middle.",
+   "strong": "ZONE",
+   "weak": "BLITZ"
+  },
+  {
+   "suit": "SHOT",
+   "rank": 12,
+   "name": "FOUR VERTS",
+   "formation": "SHOTGUN_SPREAD",
+   "routes": {
+    "wr_x": "GO:25",
+    "wr_s1": "SEAM:25",
+    "wr_s2": "SEAM:25",
+    "wr_z": "GO:25"
+   },
+   "summary": "Four receivers run straight up, stretching the deep zone.",
+   "strong": "ZONE",
+   "weak": "BLITZ"
+  },
+  {
+   "suit": "SHOT",
+   "rank": 13,
+   "name": "POST WHEEL",
+   "formation": "SHOTGUN_TRIPS",
+   "routes": {
+    "wr_s1": "POST:20",
+    "wr_s2": "WHEEL:22"
+   },
+   "summary": "The post drags the safety and the wheel goes up the sideline.",
+   "strong": "MAN",
+   "weak": "BLITZ"
+  },
+  {
+   "suit": "SHOT",
+   "rank": 14,
+   "name": "MOON SHOT",
+   "formation": "SHOTGUN_TRIPS",
+   "routes": {
+    "wr_z": "GO:35",
+    "wr_s2": "POST:30",
+    "wr_x": "GO:30"
+   },
+   "summary": "Everybody deep. Max protection and a prayer.",
+   "strong": "BLITZ",
+   "weak": "ZONE"
+  }
+ ],
+ "jokers": [
+  {
+   "name": "PHILLY SPECIAL",
+   "formation": "WILDCAT",
+   "routes": {
+    "rb": "SWEEP_R",
+    "qb": "FLAT:3"
+   },
+   "summary": "Direct snap to the back, a pitch to the tight end, then a flip to the QB sliding out to the flat. Wild.",
+   "strong": "ZONE",
+   "weak": "BLITZ",
+   "theta": {
+    "p_neg": 0.1,
+    "loss": 4,
+    "p_to": 0.04,
+    "p_zero": 0.1,
+    "med": 9,
+    "sig": 0.7,
+    "p_big": 0.22,
+    "tail": 20
+   }
+  },
+  {
+   "name": "FLEA FLICKER",
+   "formation": "I_FORM",
+   "routes": {
+    "rb": "DIVE",
+    "wr_x": "GO:25",
+    "wr_z": "POST:22"
+   },
+   "summary": "Handoff, pitch back to the QB, then a bomb to a secondary that bit on the run.",
+   "strong": "BLITZ",
+   "weak": "MAN",
+   "theta": {
+    "p_neg": 0.1,
+    "loss": 6,
+    "p_to": 0.05,
+    "p_zero": 0.15,
+    "med": 10,
+    "sig": 0.65,
+    "p_big": 0.25,
+    "tail": 22
+   }
+  }
+ ]
+}

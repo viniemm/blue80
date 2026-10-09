@@ -14,6 +14,26 @@ godot -e --path godot                       # open the editor
 godot --path godot res://scenes/main.tscn   # the earlier card-drive prototype (play-card combos and jokers)
 ```
 
+## Web build for testers (no Apple fee)
+
+iOS testers play the web build: open the link in Safari, tap Share, then **Add to Home Screen**, and it launches
+full-screen like an app. `.github/workflows/deploy-web.yml` builds the Godot web export (single-threaded, so it needs no
+special server headers) and publishes it to GitHub Pages on every push to `main`.
+
+One-time setup: push the repo to GitHub, then in **Settings > Pages** set **Source** to **GitHub Actions**. The link is
+`https://<user>.github.io/<repo>/`. To build locally instead, install the web export templates (Editor >
+Manage Export Templates), then `cd godot` and run `godot --headless --export-release "Web" ../build/web/index.html` and
+serve `build/web` with any static server. Records and settings are kept in the browser's storage on the device.
+The home-screen icon is `godot/icon.png`, drawn by `tests/make_icon.gd`.
+
+## Menus and flow
+
+`scenes/app.tscn` is the entry point: an animated splash (any tap or key skips it) fades into the main menu (PLAY or
+RESUME RUN, HOW TO PLAY, PAYTABLE, RECORDS, SETTINGS, QUIT; Up/Down/Enter or mouse). During a run, `MENU` or `Esc`
+pauses with RESUME, RESTART RUN and MAIN MENU; a run left through the menu stays alive for RESUME RUN. Lifetime
+records (peak chips, touchdowns, hands won, best hand) and settings (CRT scanlines, shoe counter, fullscreen, also `F11`)
+persist in `user://blue80.cfg`. `godot --path godot res://scenes/quant.tscn` jumps straight into a run.
+
 ## How the card-betting game plays
 
 Each down:
@@ -24,7 +44,14 @@ Each down:
 3. **Bet.** The best poker combination's lead card is your play. Pick one of five lines (CHECKDOWN, SHORT, MEDIUM,
    LONG, HAIL MARY), priced at roughly 90 / 75 / 50 / 25 / 10% for that card, and a stake. Your hand's multiplier
    (pair x1.1 up to straight flush x8 and five of a kind x12) multiplies a winning bet's payout.
-4. **Showdown.** Win the hand and your play runs: yards come from the card's curve, bent by the defense's hidden
+   Two **jokers** (PHILLY SPECIAL, FLEA FLICKER) ride in every deck as wild cards: they stand in for any card when
+   you build a hand, and you may run one as a swingy trick play. After the draw, every card in your made hand (a pair
+   gives 2, trips 3, two pair 4, straight/flush/full house 5, high card 1) may be chosen as the play: tap a gold-edged
+   card or press `P`. Each card shows a `+` strength and a `-` weakness (the defense styles it beats and loses to);
+   tap the (i) badge on a card (or hold it, or right-click) for its formation, routes and yards by defense. Ante is the forced one-chip hand
+   stake (won or lost times the hand multipliers); the optional bet only plays on a won hand; `NO BET` is ante only.
+4. **Showdown.** Win the hand and your play spins on an outcome wheel (wedges sized by the play's real odds, a gold
+   tick marking your bet line), then runs: yards come from the card's curve, bent by the defense's hidden
    style (the suit of its lead card: BLITZ, ZONE, MAN or BALANCED), and the bet settles on those yards. Lose the hand
    and the bet is refunded, but the defense's hand decides the damage (a stuff, loss, sack, fumble or pick six).
 
@@ -54,7 +81,7 @@ press `F5` again (about a second). Text uses `canvas_items` stretching, so it st
 
 ```
 godot/
-  data/       rosters, 20 offensive plays, 10 defensive plays, scheme matrix (JSON)
+  data/       plays.json (52 play cards + 2 jokers: formations, routes, summaries, strength and weakness); older prototype JSON
   scripts/
     engine/   mathx, sim (pocket, routes, resolvers, yardage, rules), evaluator, game_data
     game/     cards (deck, combos, jokers), defense_curve, drive
@@ -73,13 +100,20 @@ godot --headless --path godot -s tests/drive_test.gd   # 300 random drives: rule
 godot --path godot -s tests/autoplay.gd -- <out_dir>   # plays a drive through the UI and screenshots it
 godot --path godot -s tests/discard_test.gd -- <out_dir>
 godot --headless --path godot -s tests/quant_lab.gd    # math lab: pricing, edges, value of information (about 3 minutes)
-godot --headless --path godot -s tests/qgame_test.gd    # plays 12k snaps per betting policy through the real game rules
+godot --headless --path godot -s tests/qgame_test.gd -- 5000 0.5   # snaps per policy and the bet-multiplier share: edge by strategy (hand strength, read, choice, peek)
+godot --headless --path godot -s tests/fit_check.gd    # bronze plays vs real football per-play averages, by tier and family
+godot --headless --path godot -s tests/card_ev.gd      # expected yards per card and blind vs informed bet EV
 godot --path godot --resolution 540x960 -s tests/qshot.gd -- <out_dir>   # plays one down through the UI, screenshots each phase
+godot --path godot --resolution 540x960 -s tests/anim_shots.gd -- <out_dir>   # one down mid-animation: deal, lift, redeal, flips, verdict
+godot --path godot --resolution 540x960 -s tests/cards_shots.gd -- <out_dir>   # joker hand, play choice and the card info popup
+godot --path godot --resolution 540x960 -s tests/showdown_shots.gd -- <out_dir>   # wheel spin, field animation and the result panel
+godot --path godot --resolution 540x960 -s tests/menu_shots.gd -- <out_dir>   # splash, every menu page and the pause overlay
+godot --path godot --resolution 540x960 -s tests/make_icon.gd   # redraws godot/icon.png
 godot --path godot --resolution 540x960 -s tests/qgallery.gd -- <out_dir>   # renders every card tier in every suit for a visual check
 ```
 
-`godot/scripts/quant/` holds the prototype for the card-betting redesign: `deck52` (52 plays from a few curve
-constants each), `yard_curve` (closed-form yardage distribution), `poker`, `lines` (the five yardage lines) and
+`godot/scripts/quant/` holds the card-betting game: `deck52` (52 plays from a few curve constants each plus the two
+jokers, with the play info in `data/plays.json`), `yard_curve` (closed-form yardage distribution), `poker`, `lines` (the five yardage lines) and
 `def_context` (hidden defense styles). It now powers the playable game via `qgame.gd` and `ui/qmain.gd`.
 
 Run `godot --headless --path godot --import` once after adding new `class_name` scripts.

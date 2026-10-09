@@ -21,4 +21,9 @@ static func apply(theta: Dictionary, style: String) -> Dictionary:
 	var mods: Dictionary = MODS[style]
 	for k in mods:
 		out[k] = float(out[k]) * pow(float(mods[k]), strength)
+	# the play's own strength and weakness (set by Deck52): a bonus or a penalty against one specific style
+	var aff: Dictionary = theta.get("aff", {})
+	if aff.has(style):
+		out.med = float(out.med) * float(aff[style][0])
+		out.p_big = float(out.p_big) * float(aff[style][1])
 	return out

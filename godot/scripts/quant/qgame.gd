@@ -16,7 +16,10 @@ const TABLE_MAX := 10.0          # absolute table limit, so a winning bettor gro
 const TD_BONUS := 10.0
 const STYLE_OF_SUIT := ["BLITZ", "ZONE", "MAN", "BALANCED"]
 const STYLE_STRENGTH := 2.0
-const VIG := 0.20
+const VIG := 0.25
+## The hand multiplier is public, so the house prices it in: bets only get this share of the multiplier's bonus
+## (the ante gets all of it). 0 = bets ignore the hand, 1 = bets get the full multiplier.
+static var bet_k := 0.5
 const DECKS := 4
 const RESHUFFLE_AT := 48         # reshuffle the shoe when fewer than this many cards remain before a deal
 
@@ -24,6 +27,8 @@ var rng := RandomNumberGenerator.new()
 var cards: Array                 # the 52 distinct plays (one deck)
 var lines: Lines
 var bankroll := START_BANKROLL
+var peak := START_BANKROLL     # highest bankroll this run
+var best_cat := -1             # best hand category won this run
 var phase := "DRAW"            # DRAW -> BET -> RESULT -> (DRAW | OVER)
 var shoe: Array = []
 var shoe_pos := 0
@@ -34,6 +39,7 @@ var theirs: Array = []
 var _def_seen: Array = []      # which defense cards the player has seen
 var face_up: Array = []        # indices into `theirs` that are visible
 var my_eval: Dictionary = {}
+var play_idx := 0              # which of your cards runs the play (any card in the made hand may be chosen)
 var their_eval: Dictionary = {}
 var bet := {"line": -1, "stake": 0.0}
 var st := {}                   # down, distance, yardline_to_opponent_goal
@@ -50,7 +56,7 @@ func _init(seed_value: int = 0) -> void:
 	else:
 		rng.seed = seed_value
 	DefContext.strength = STYLE_STRENGTH
-	cards = Deck52.build()
+	cards = Deck52.build_all()
 	lines = Lines.new(cards, VIG, "card")
 	_shuffle_shoe()
 	_new_drive()
@@ -130,6 +136,7 @@ func _deal() -> void:
 	face_up = []
 	bet = {"line": -1, "stake": 0.0}
 	my_eval = Poker.evaluate(mine)
+	play_idx = my_eval.lead_idx
 	their_eval = {}
 	phase = "DRAW"
 
@@ -150,6 +157,7 @@ func draw(idx: Array) -> void:
 	for i in Poker.discards(theirs):
 		theirs[i] = _take()                      # the AI's discards and new cards stay unseen
 	my_eval = Poker.evaluate(mine)
+	play_idx = my_eval.lead_idx
 	their_eval = Poker.evaluate(theirs)
 	var order := [0, 1, 2, 3, 4]
 	for i in range(order.size() - 1, 0, -1):
@@ -171,7 +179,21 @@ func skip_draw() -> void:
 
 # ------------------------------------------------------------------ info for the UI
 func my_lead() -> Dictionary:
-	return my_eval.lead
+	return mine[play_idx]
+
+
+## Hand positions that may be chosen as the play: every card in the made combination, plus any joker.
+func eligible() -> Array:
+	return my_eval.eligible
+
+
+func set_play(i: int) -> void:
+	if (phase == "DRAW" or phase == "BET") and my_eval.eligible.has(i):
+		play_idx = i
+
+
+func wild_left() -> int:
+	return copies_left(52) + copies_left(53)
 
 
 func my_mult() -> float:
@@ -179,7 +201,7 @@ func my_mult() -> float:
 
 
 func style_of(card: Dictionary) -> String:
-	return STYLE_OF_SUIT[card.suit]
+	return STYLE_OF_SUIT[card.suit] if card.suit < 4 else "WILD"
 
 
 func line_threshold(k: int) -> int:
@@ -192,7 +214,12 @@ func line_house_p(k: int) -> float:
 
 ## Net chips won per chip staked if line k clears, including the hand multiplier.
 func line_payout(k: int) -> float:
-	return lines.odds(my_lead(), k) * my_mult()
+	return lines.odds(my_lead(), k) * bet_mult()
+
+
+## The multiplier that actually applies to a bet's payout.
+func bet_mult() -> float:
+	return 1.0 + (my_mult() - 1.0) * bet_k
 
 
 func set_bet(k: int, stake: float) -> void:
@@ -201,7 +228,7 @@ func set_bet(k: int, stake: float) -> void:
 
 ## What the defense's lead card is, only known after the showdown (or by cheating in tests).
 func hidden_style() -> String:
-	return style_of(their_eval.lead)
+	return STYLE_OF_SUIT[their_eval.lead_suit]           # a joker leading stands in for some suit
 
 
 # ------------------------------------------------------------------ showdown
@@ -305,6 +332,9 @@ func _advance_field(res: Dictionary) -> void:
 func _settle(res: Dictionary) -> Dictionary:
 	var delta: float = res.ante_delta + res.bet_delta + res.bonus
 	bankroll += delta
+	peak = maxf(peak, bankroll)
+	if res.win == 1:
+		best_cat = maxi(best_cat, int(my_eval.cat))
 	res["delta"] = delta
 	res["bankroll"] = bankroll
 	if not res.has("drive_over"):

@@ -53,6 +53,12 @@ static func text(ci: CanvasItem, x: float, y: float, s: String, scale: int = 1, 
 	ci.draw_string(f, Vector2(roundf(x), roundf(y) + f.get_ascent(size)), s, HORIZONTAL_ALIGNMENT_LEFT, -1, size, color)
 
 
+## Press Start 2P at an arbitrary pixel size (multiples of 8 stay crisp), for logos.
+static func big(ci: CanvasItem, x: float, y: float, s: String, size: int, color: Color) -> void:
+	var f := font(3)
+	ci.draw_string(f, Vector2(roundf(x), roundf(y) + f.get_ascent(size)), s, HORIZONTAL_ALIGNMENT_LEFT, -1, size, color)
+
+
 static func text_width(s: String, scale: int = 1) -> float:
 	return font(scale).get_string_size(s, HORIZONTAL_ALIGNMENT_LEFT, -1, SIZES[scale]).x
 

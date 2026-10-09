@@ -44,6 +44,25 @@ var def_tier := 0            # 0 = not revealed yet (ghost defenders)
 var _anim: Dictionary = {}
 var _t := 0.0
 
+# --- scoreboard plate, goal-line bonus and yardage animation (used by the betting game)
+const ORD := ["", "1ST", "2ND", "3RD", "4TH"]
+var show_plate := false       # the betting game turns this on
+var goal_label := ""          # shown in the opposing end zone, e.g. "+10"
+var v_los := -1.0             # displayed line of scrimmage (px); < 0 follows `state`
+var v_fd := -1.0
+var v_down := 1
+var v_dist := 10.0
+var plate_x := 200.0
+var plate_flip := 1.0
+var plate_flash := 0.0
+var plate_banner := ""
+var plate_banner_color := Color("ffcc33")
+var gain_t := 0.0
+var gain_text := ""
+var gain_color := Color("3fd07a")
+var gain_from := 0.0
+var ez_flash := 0.0
+
 
 func _init() -> void:
 	custom_minimum_size = Vector2(W, H)
@@ -52,7 +71,64 @@ func _init() -> void:
 
 func set_state(st: Dictionary) -> void:
 	state = st
+	_sync_view()
 	queue_redraw()
+
+
+## Snap the displayed line, first-down marker and down & distance to `state` with no animation.
+func _sync_view() -> void:
+	v_los = los_x()
+	v_dist = float(state.distance)
+	v_down = int(state.get("down", 1))
+	v_fd = minf(float(W - EZ), v_los + roundf(v_dist * YD))
+	gain_t = 0.0
+	plate_banner = ""
+	plate_flip = 1.0
+
+
+## Animate a snap's outcome: the line of scrimmage slides, a yardage label rises, then the plate flips to the new down.
+func animate_result(pre: Dictionary, post: Dictionary, res: Dictionary) -> void:
+	state = post
+	var los0 := x_of(100.0 - float(pre.yardline_to_opponent_goal))
+	var los1 := x_of(100.0 - float(post.yardline_to_opponent_goal))
+	v_los = los0
+	gain_from = los0
+	var yards := int(res.yards)
+	gain_text = "%+d YDS" % yards if yards != 0 else "NO GAIN"
+	gain_color = Color("3fd07a") if yards > 0 else (Color("ff4d4d") if yards < 0 else Color("8c97c8"))
+	var tw := create_tween().set_parallel(true)
+	tw.tween_property(self, "gain_t", 1.0, 1.7).from(0.0)
+	tw.tween_property(self, "v_los", los1, 0.7).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tw.tween_callback(_apply_down.bind(post, res)).set_delay(0.8)
+
+
+func _apply_down(post: Dictionary, res: Dictionary) -> void:
+	var evt: String = res.event
+	var banner := ""
+	var col := Color("ffcc33")
+	if evt == "TOUCHDOWN":
+		banner = "TOUCHDOWN!"
+		ez_flash = 1.0
+		create_tween().tween_property(self, "ez_flash", 0.0, 1.4)
+	elif evt == "FIRST DOWN":
+		banner = "FIRST DOWN!"
+	elif bool(res.turnover) or evt in ["TURNOVER", "TURNOVER ON DOWNS", "SAFETY"]:
+		banner = "TURNOVER!" if evt != "TURNOVER ON DOWNS" else "TURNOVER ON DOWNS"
+		col = Color("ff4d4d")
+	var tw := create_tween()
+	tw.tween_property(self, "plate_flip", 0.05, 0.09).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	tw.tween_callback(func():
+		v_down = int(post.get("down", 1))
+		v_dist = float(post.distance)
+		v_fd = minf(float(W - EZ), x_of(100.0 - float(post.yardline_to_opponent_goal)) + roundf(v_dist * YD))
+		plate_banner = banner
+		plate_banner_color = col
+		plate_flash = 1.0)
+	tw.tween_property(self, "plate_flip", 1.0, 0.14).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.parallel().tween_property(self, "plate_flash", 0.0, 0.8)
+	if banner != "":
+		tw.tween_interval(1.0)
+		tw.tween_callback(func(): plate_banner = "")
 
 
 func set_play(p: Dictionary) -> void:
@@ -197,9 +273,9 @@ func _draw() -> void:
 	draw_rect(Rect2(0, FY0 - 2, W, 2), LINE_C)
 	draw_rect(Rect2(0, FY0 + FH, W, 2), LINE_C)
 
-	var los := los_x()
+	var los := v_los if v_los >= 0.0 else los_x()
 	draw_rect(Rect2(roundf(los), FY0, 1, FH), LOS_C)
-	var fd := minf(float(W - EZ), los + roundf(float(state.distance) * YD))
+	var fd := v_fd if v_fd >= 0.0 else minf(float(W - EZ), los + roundf(float(state.distance) * YD))
 	if fd > los + 1:
 		draw_rect(Rect2(roundf(fd), FY0, 1, FH), FIRST_C)
 
@@ -234,6 +310,57 @@ func _draw() -> void:
 		_px(pos.x - 1, pos.y - 1, 3, 3, DEF_C if _anim.bad_end else BALL_C)
 	else:
 		_px(los - 14, CY - 1, 3, 3, BALL_C)
+	_draw_fx(los)
+
+
+func _outlined(cx: float, y: float, s: String, scale_i: int, col: Color) -> void:
+	for o in [Vector2(-1, 0), Vector2(1, 0), Vector2(0, -1), Vector2(0, 1), Vector2(1, 1)]:
+		Px.text_center(self, cx + o.x, y + o.y, s, scale_i, Color(0.02, 0.04, 0.13, 0.95))
+	Px.text_center(self, cx, y, s, scale_i, col)
+
+
+## Scoreboard plate, goal-line bonus and the rising yardage label.
+func _draw_fx(los: float) -> void:
+	var pulse := 0.6 + 0.4 * sin(Time.get_ticks_msec() / 1000.0 * 4.0)
+	if goal_label != "":
+		var cx := float(W - EZ / 2)
+		if ez_flash > 0.0:
+			draw_rect(Rect2(W - EZ, FY0, EZ, FH), Color(1, 0.95, 0.5, ez_flash * 0.7))
+		draw_circle(Vector2(cx, FY0 + 28), 8.0, Color("060b22"))
+		draw_circle(Vector2(cx, FY0 + 28), 7.0, Color("ffcc33").lerp(Color.WHITE, 0.3 * pulse))
+		draw_circle(Vector2(cx, FY0 + 28), 4.0, Color("d9a21c"))
+		Px.text_center(self, cx, FY0 + 41, "TD", 2, Color.WHITE)
+		Px.text_center(self, cx, FY0 + 54, goal_label, 2, Color("ffe680").lerp(Color.WHITE, 0.4 * pulse))
+		Px.text_center(self, cx, FY0 + 68, "CHIPS", 0, Color(1, 1, 1, 0.8))
+	# gain / loss ruler along the bottom lane and the rising label
+	if gain_t > 0.0 and gain_t < 1.0:
+		var a := minf(gain_from, los)
+		var b := maxf(gain_from, los)
+		var fade := 1.0 - clampf((gain_t - 0.6) / 0.4, 0.0, 1.0)
+		var gc := Color(gain_color, fade)
+		draw_rect(Rect2(a, FY0 + FH - 6, maxf(2.0, b - a), 3), gc)
+		draw_rect(Rect2(los - 1, FY0 + FH - 10, 3, 11), gc)
+		_outlined(clampf(los, 50.0, W - 50.0), FY0 + FH - 36.0 - 12.0 * gain_t, gain_text, 3, gc)
+	if not show_plate:
+		return
+	# down & distance plate: sits on the side of the field away from the line of scrimmage
+	var ytg := (float(W - EZ) - los) / float(YD)
+	var dist := int(roundf(v_dist))
+	var text := "%s & %s" % [ORD[clampi(v_down, 1, 4)], "GOAL" if v_dist >= ytg - 0.5 else str(dist)]
+	var shown := plate_banner if plate_banner != "" else text
+	var pw := Px.text_width(shown, 3) + 22.0
+	var target := float(W - EZ) - pw / 2.0 - 8.0 if los < W * 0.5 else float(EZ) + pw / 2.0 + 8.0
+	plate_x = target if absf(plate_x - target) < 0.5 else plate_x + (target - plate_x) * 0.18
+	var ph := 26.0
+	var cy := FY0 + 3.0 + ph / 2.0
+	draw_set_transform(Vector2(plate_x, cy), 0.0, Vector2(1.0, plate_flip))
+	var border := plate_banner_color if plate_banner != "" else (Color("ff4d4d") if v_down == 4 else Color("ffcc33"))
+	var fill := Color(0.02, 0.04, 0.13, 0.9).lerp(border, plate_flash * 0.8)
+	draw_rect(Rect2(-pw / 2.0 - 1, -ph / 2.0 - 1, pw + 2, ph + 2), Color("060b22"))
+	draw_rect(Rect2(-pw / 2.0, -ph / 2.0, pw, ph), border)
+	draw_rect(Rect2(-pw / 2.0 + 2, -ph / 2.0 + 2, pw - 4, ph - 4), fill)
+	Px.text_center(self, 0.0, -8.0, shown, 3, Color("060b22") if plate_flash > 0.5 else (border if plate_banner != "" else Color.WHITE))
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
 
 # ------------------------------------------------------------------ animation
@@ -293,7 +420,10 @@ func animate(out: Dictionary) -> void:
 
 func _process(delta: float) -> void:
 	if _anim.is_empty():
-		set_process(false)
+		if show_plate or goal_label != "":
+			queue_redraw()                    # the plate, pulse and tweens redraw every frame
+		else:
+			set_process(false)
 		return
 	var segs: Array = _anim.segs
 	_t += delta
