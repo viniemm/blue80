@@ -23,8 +23,9 @@ static var _head: FontFile
 
 
 static func _load(path: String) -> FontFile:
-	var f := FontFile.new()
-	f.data = FileAccess.get_file_as_bytes(path)
+	# load() uses the imported font, which is what an exported build contains; reading the .ttf from disk only works
+	# when running from the editor (the web build rendered every glyph as an empty box).
+	var f: FontFile = load(path)
 	f.antialiasing = TextServer.FONT_ANTIALIASING_NONE      # keep pixel edges hard
 	f.hinting = TextServer.HINTING_NONE
 	f.subpixel_positioning = TextServer.SUBPIXEL_POSITIONING_DISABLED
