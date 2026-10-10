@@ -331,7 +331,6 @@ func _draw_fx(los: float) -> void:
 		draw_circle(Vector2(cx, FY0 + 28), 4.0, Color("d9a21c"))
 		Px.text_center(self, cx, FY0 + 41, "TD", 2, Color.WHITE)
 		Px.text_center(self, cx, FY0 + 54, goal_label, 2, Color("ffe680").lerp(Color.WHITE, 0.4 * pulse))
-		Px.text_center(self, cx, FY0 + 68, "CHIPS", 0, Color(1, 1, 1, 0.8))
 	# gain / loss ruler along the bottom lane and the rising label
 	if gain_t > 0.0 and gain_t < 1.0:
 		var a := minf(gain_from, los)

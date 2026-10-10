@@ -66,6 +66,27 @@ static func stdev(th: Dictionary) -> float:
 	return sqrt(maxf(0.0, e2 - m * m))
 
 
+## P(loss size >= t) for a lost snap: the loss is 1 + Exp(mean = th.loss), rounded.
+static func loss_survival(th: Dictionary, t: int) -> float:
+	if t <= 1:
+		return 1.0
+	return exp(-(float(t) - 1.5) / float(th.loss))
+
+
+## How many yards a losing snap costs (always at least 1), for the loss wheel.
+static func sample_loss(th: Dictionary, rng: RandomNumberGenerator) -> int:
+	return maxi(1, int(round(1.0 + (-log(1.0 - rng.randf()) * float(th.loss)))))
+
+
+## A gain for the outcome wheel: the curve conditioned on gaining at least a yard, so the wheel holds positive yardage only.
+static func sample_gain(th: Dictionary, rng: RandomNumberGenerator) -> int:
+	for i in 60:
+		var s := sample(th, rng)
+		if s.yards >= 1 and not s.turnover:
+			return int(s.yards)
+	return 1
+
+
 ## Draws one snap: {yards:int, turnover:bool}.
 static func sample(th: Dictionary, rng: RandomNumberGenerator) -> Dictionary:
 	var u := rng.randf()

@@ -1,52 +1,42 @@
 class_name QGame
 extends RefCounted
-## One run of the card-betting game: bankroll, a drive of downs, and the round loop
-##   DRAW  deal 5 each, you discard up to 3
-##   BET   AI draws, 2 defense cards flip face-up, you pick a line and a stake
-##   RESULT showdown: win -> your lead card runs and the bet settles on its yards (bet voided if you lose)
-##          lose -> the defense's hand decides the damage, scaled by how badly you were beaten
-## A defense card's suit is a style (BLITZ / ZONE / MAN / BALANCED); the style of its lead card bends your curve.
+## One run: DRIVES drives of four downs, scored in touchdowns. Yardage is the only currency, and the wheel decides it.
+##   DRAW   deal 5 each, you discard up to 3
+##   BET    the AI draws, 2 defense cards flip face-up; you pick which card of your made hand is the play, then SNAP
+##   RESULT showdown. Win the hand: the wheel spins a gain (positive yards only) times YOUR hand multiplier. Lose it:
+##          the wheel spins a loss times THEIR multiplier. Losing by PICK_SIX_GAP or more hand classes is a turnover.
+## A defense card's suit is a style (BLITZ / ZONE / MAN / BALANCED); the style of its lead card bends your play's curve.
 ## Cards come from a persistent multi-deck shoe, reshuffled only when it runs low, so what has been dealt tells you
 ## something about what is left.
 
-const ANTE := 1.0
-const START_BANKROLL := 100.0
-const MAX_STAKE_FRAC := 0.25
-const TABLE_MAX := 10.0          # absolute table limit, so a winning bettor grows linearly and not exponentially
-const TD_BONUS := 10.0
+const DRIVES := 6
+const PICK_SIX_GAP := 4          # lose the hand by this many classes or more and it is a turnover
 const STYLE_OF_SUIT := ["BLITZ", "ZONE", "MAN", "BALANCED"]
 const STYLE_STRENGTH := 2.0
-const VIG := 0.25
-## The hand multiplier is public, so the house prices it in: bets only get this share of the multiplier's bonus
-## (the ante gets all of it). 0 = bets ignore the hand, 1 = bets get the full multiplier.
-static var bet_k := 0.5
 const DECKS := 4
 const RESHUFFLE_AT := 48         # reshuffle the shoe when fewer than this many cards remain before a deal
 
 var rng := RandomNumberGenerator.new()
-var cards: Array                 # the 52 distinct plays (one deck)
-var lines: Lines
-var bankroll := START_BANKROLL
-var peak := START_BANKROLL     # highest bankroll this run
-var best_cat := -1             # best hand category won this run
-var phase := "DRAW"            # DRAW -> BET -> RESULT -> (DRAW | OVER)
+var cards: Array                 # the 52 distinct plays plus the 2 jokers
+var phase := "DRAW"              # DRAW -> BET -> RESULT -> (DRAW | OVER)
 var shoe: Array = []
 var shoe_pos := 0
-var seen_id := {}              # card id -> copies the player has seen since the last shuffle
+var seen_id := {}                # card id -> copies the player has seen since the last shuffle
 var shuffles := 0
 var mine: Array = []
 var theirs: Array = []
-var _def_seen: Array = []      # which defense cards the player has seen
-var face_up: Array = []        # indices into `theirs` that are visible
+var _def_seen: Array = []        # which defense cards the player has seen
+var face_up: Array = []          # indices into `theirs` that are visible
 var my_eval: Dictionary = {}
-var play_idx := 0              # which of your cards runs the play (any card in the made hand may be chosen)
 var their_eval: Dictionary = {}
-var bet := {"line": -1, "stake": 0.0}
-var st := {}                   # down, distance, yardline_to_opponent_goal
+var play_idx := 0                # which of your cards runs the play (any card in the made hand may be chosen)
+var st := {}                     # down, distance, yardline_to_opponent_goal
 var drive_no := 1
 var tds := 0
+var yards_total := 0             # net yards over the run
+var best_cat := -1               # best hand category won this run
 var last: Dictionary = {}
-var history: Array = []        # one record per snap, for analytics
+var history: Array = []          # one record per snap, for analytics
 var log: Array = []
 
 
@@ -57,7 +47,6 @@ func _init(seed_value: int = 0) -> void:
 		rng.seed = seed_value
 	DefContext.strength = STYLE_STRENGTH
 	cards = Deck52.build_all()
-	lines = Lines.new(cards, VIG, "card")
 	_shuffle_shoe()
 	_new_drive()
 
@@ -105,6 +94,10 @@ func rank_left(rank: int) -> int:
 	return n
 
 
+func wild_left() -> int:
+	return copies_left(52) + copies_left(53)
+
+
 ## Every unseen copy, expanded, for probability work (the test analyst samples from this).
 func unseen_pool() -> Array:
 	var out: Array = []
@@ -134,15 +127,10 @@ func _deal() -> void:
 		theirs.append(_take())
 	_def_seen = [false, false, false, false, false]
 	face_up = []
-	bet = {"line": -1, "stake": 0.0}
 	my_eval = Poker.evaluate(mine)
 	play_idx = my_eval.lead_idx
 	their_eval = {}
 	phase = "DRAW"
-
-
-func max_stake() -> float:
-	return minf(snappedf(bankroll * MAX_STAKE_FRAC, 0.5), TABLE_MAX)
 
 
 # ------------------------------------------------------------------ the draw
@@ -192,38 +180,12 @@ func set_play(i: int) -> void:
 		play_idx = i
 
 
-func wild_left() -> int:
-	return copies_left(52) + copies_left(53)
-
-
 func my_mult() -> float:
 	return Poker.multiplier(int(my_eval.cat))
 
 
 func style_of(card: Dictionary) -> String:
 	return STYLE_OF_SUIT[card.suit] if card.suit < 4 else "WILD"
-
-
-func line_threshold(k: int) -> int:
-	return lines.threshold(my_lead(), k)
-
-
-func line_house_p(k: int) -> float:
-	return lines.house_p(my_lead(), k)
-
-
-## Net chips won per chip staked if line k clears, including the hand multiplier.
-func line_payout(k: int) -> float:
-	return lines.odds(my_lead(), k) * bet_mult()
-
-
-## The multiplier that actually applies to a bet's payout.
-func bet_mult() -> float:
-	return 1.0 + (my_mult() - 1.0) * bet_k
-
-
-func set_bet(k: int, stake: float) -> void:
-	bet = {"line": k, "stake": clampf(stake, 0.0, max_stake()) if k >= 0 else 0.0}
 
 
 ## What the defense's lead card is, only known after the showdown (or by cheating in tests).
@@ -241,64 +203,44 @@ func showdown() -> Dictionary:
 			_see(theirs[i])
 	var mine_score: int = my_eval.score
 	var their_score: int = their_eval.score
+	var my_m := my_mult()
+	var their_m := Poker.multiplier(int(their_eval.cat))
 	var res := {"win": 0, "my_cat": my_eval.cat, "their_cat": their_eval.cat, "style": hidden_style(),
-			"my_lead": my_lead(), "their_lead": their_eval.lead, "yards": 0, "turnover": false, "event": "",
-			"ante_delta": 0.0, "bet_delta": 0.0, "bonus": 0.0, "bet": bet.duplicate(), "voided": false, "cleared": false}
+			"my_lead": my_lead(), "their_lead": their_eval.lead, "my_mult": my_m, "their_mult": their_m,
+			"spin": 0, "spin_kind": "none", "mult": 1.0, "yards": 0, "turnover": false, "event": ""}
 	if mine_score == their_score:
 		res.event = "PUSH"
-		res.voided = true
 		return _settle(res)
+	var lead := my_lead()
+	var theta_true := DefContext.apply(lead.theta, res.style)
 	if mine_score > their_score:
 		res.win = 1
-		var m := my_mult()
-		res.ante_delta = ANTE * m
-		var lead := my_lead()
-		var theta_true := DefContext.apply(lead.theta, res.style)
-		var snap: Dictionary = YardCurve.sample(theta_true, rng)
-		res.yards = snap.yards
-		res.turnover = snap.turnover
-		if bet.line >= 0 and bet.stake > 0.0:
-			var cleared: bool = snap.yards >= line_threshold(bet.line)
-			res.cleared = cleared
-			res.bet_delta = bet.stake * line_payout(bet.line) if cleared else -float(bet.stake)
-		_advance_field(res)
+		res.spin_kind = "gain"
+		res.spin = YardCurve.sample_gain(theta_true, rng)             # the wheel: positive yards only
+		res.mult = my_m
+		res.yards = int(round(float(res.spin) * my_m))
+		best_cat = maxi(best_cat, int(my_eval.cat))
 	else:
 		res.win = -1
-		res.ante_delta = -ANTE * Poker.multiplier(int(their_eval.cat))
-		res.voided = bet.line >= 0
-		_defense_wins(res)
-	return _settle(res)
-
-
-## A lost hand: the damage grows with how many hand categories the defense beat you by.
-func _defense_wins(res: Dictionary) -> void:
-	var gap: int = int(their_eval.cat) - int(my_eval.cat)
-	if gap <= 0:
-		res.event = "STUFFED"
-		res.yards = -rng.randi_range(0, 2)
-	elif gap == 1:
-		res.event = "LOSS"
-		res.yards = -rng.randi_range(1, 4)
-	elif gap == 2:
-		res.event = "SACKED"
-		res.yards = -rng.randi_range(4, 8)
-	elif gap == 3:
-		res.event = "FUMBLE"
-		res.yards = -rng.randi_range(1, 4)
-		res.turnover = true
-	else:
-		res.event = "PICK SIX"
-		res.yards = -rng.randi_range(2, 8)
-		res.turnover = true
-		res.bonus = -TD_BONUS * 0.5
+		var gap: int = int(their_eval.cat) - int(my_eval.cat)
+		if gap >= PICK_SIX_GAP:
+			res.event = "PICK SIX"
+			res.turnover = true
+		else:
+			res.spin_kind = "loss"
+			res.spin = YardCurve.sample_loss(theta_true, rng)
+			res.mult = their_m
+			res.yards = -int(round(float(res.spin) * their_m))
+			res.event = "LOSS"
 	_advance_field(res)
+	return _settle(res)
 
 
 func _advance_field(res: Dictionary) -> void:
 	var y: int = res.yards
 	var yl: float = st.yardline_to_opponent_goal - y
 	if res.event == "":
-		res.event = "RUN" if y >= 0 else "LOSS"
+		res.event = "GAIN"
 	res.drive_over = false
 	if res.turnover:
 		res.drive_over = true
@@ -306,7 +248,6 @@ func _advance_field(res: Dictionary) -> void:
 		return
 	if yl <= 0.0:
 		res.event = "TOUCHDOWN"
-		res.bonus += TD_BONUS
 		res.drive_over = true
 		tds += 1
 		st.yardline_to_opponent_goal = 0.0
@@ -330,20 +271,14 @@ func _advance_field(res: Dictionary) -> void:
 
 
 func _settle(res: Dictionary) -> Dictionary:
-	var delta: float = res.ante_delta + res.bet_delta + res.bonus
-	bankroll += delta
-	peak = maxf(peak, bankroll)
-	if res.win == 1:
-		best_cat = maxi(best_cat, int(my_eval.cat))
-	res["delta"] = delta
-	res["bankroll"] = bankroll
+	yards_total += int(res.yards)
 	if not res.has("drive_over"):
 		res["drive_over"] = false
 	history.append({"lead_id": my_lead().id, "style": res.style, "win": res.win, "yards": res.yards,
-			"line": bet.line, "stake": bet.stake, "cleared": res.cleared, "delta": delta})
-	log.push_front("%s: %s %+d yds  %+.1f chips" % [res.event, my_lead().name, res.yards, delta])
+			"my_cat": res.my_cat, "their_cat": res.their_cat})
+	log.push_front("%s: %s %+d yds" % [res.event, my_lead().name, res.yards])
 	last = res
-	phase = "OVER" if bankroll <= 0.0 else "RESULT"
+	phase = "OVER" if (res.drive_over and drive_no >= DRIVES) else "RESULT"
 	return res
 
 

@@ -39,35 +39,32 @@ the app mutes itself in the background. Per-sound loudness is the `LEVELS` table
 `scenes/app.tscn` is the entry point: an animated splash (any tap or key skips it) fades into the main menu (PLAY or
 RESUME RUN, HOW TO PLAY, PAYTABLE, RECORDS, SETTINGS, QUIT; Up/Down/Enter or mouse). During a run, `MENU` or `Esc`
 pauses with RESUME, RESTART RUN and MAIN MENU; a run left through the menu stays alive for RESUME RUN. Lifetime
-records (peak chips, touchdowns, hands won, best hand) and settings (CRT scanlines, shoe counter, fullscreen, also `F11`)
+records (best touchdowns and net yards, hands won, best hand) and settings (CRT scanlines, shoe counter, fullscreen, also `F11`)
 persist in `user://blue80.cfg`. `godot --path godot res://scenes/quant.tscn` jumps straight into a run.
 
 ## How the card-betting game plays
 
-Each down:
-1. **Deal.** You and the defense each get 5 cards from a persistent 4-deck shoe (208 cards, reshuffled only when it runs low). There are 52 distinct plays: suit is the play
-   family (RUN, RPO, PASS, SHOT) and rank sets its tier (2-6 bronze, 7-10 silver, J/Q/K gold, A platinum), with
-   better expected yards but more variance at higher ranks.
-2. **Draw.** Tap up to 3 cards to swap. The AI draws too. Two of the defense's final cards flip face-up.
-3. **Bet.** The best poker combination's lead card is your play. Pick one of five lines (CHECKDOWN, SHORT, MEDIUM,
-   LONG, HAIL MARY), priced at roughly 90 / 75 / 50 / 25 / 10% for that card, and a stake. Your hand's multiplier
-   (pair x1.1 up to straight flush x8 and five of a kind x12) multiplies a winning bet's payout.
-   Two **jokers** (PHILLY SPECIAL, FLEA FLICKER) ride in every deck as wild cards: they stand in for any card when
-   you build a hand, and you may run one as a swingy trick play. After the draw, every card in your made hand (a pair
-   gives 2, trips 3, two pair 4, straight/flush/full house 5, high card 1) may be chosen as the play: tap a gold-edged
-   card or press `P`. Each card shows a `+` strength and a `-` weakness (the defense styles it beats and loses to);
-   tap the (i) badge on a card (or hold it, or right-click) for its formation, routes and yards by defense. Ante is the forced one-chip hand
-   stake (won or lost times the hand multipliers); the optional bet only plays on a won hand; `NO BET` is ante only.
-4. **Showdown.** A versus banner pits your hand against the defense's and stamps YOU WIN, DEFENSE WINS or PUSH.
-   Win the hand and your play spins on an outcome wheel (wedges sized by the play's real odds, a gold
-   tick marking your bet line), then runs: yards come from the card's curve, bent by the defense's hidden
-   style (the suit of its lead card: BLITZ, ZONE, MAN or BALANCED), and the bet settles on those yards. Lose the hand
-   and the bet is refunded, but the defense's hand decides the damage (a stuff, loss, sack, fumble or pick six).
+Win poker hands to run football plays; a wheel decides how many yards you gain or lose. There are no chips, no points
+and no betting: a run is 6 drives of four downs, scored in touchdowns.
 
-The house prices each card's own curve averaged over all defense styles, so an uninformed bettor has no edge. The
-edge is reading the two face-up cards (what the defense's lead suit probably is), sizing by hand strength, and tracking the
-shoe: the strip under the tells shows copies left by rank, so a rank-rich shoe means more pairs and trips for both hands.
-Controls: tap cards, line rows and buttons. Desktop shortcuts: `1`-`5` (select a card or line), `Enter` (advance).
+Each down:
+1. **Deal.** You and the defense each get 5 cards from a persistent 4-deck shoe (216 cards, reshuffled only when it runs low). There are 52 distinct plays: suit is the play
+   family (RUN, RPO, PASS, SHOT) and rank sets its tier (2-6 bronze, 7-10 silver, J/Q/K gold, A platinum), with
+   better expected yards but more variance at higher ranks. Two **jokers** (PHILLY SPECIAL, FLEA FLICKER) ride in every
+   deck as wild cards: they stand in for any card when you build a hand, and you may run one as a swingy trick play.
+2. **Draw.** Tap up to 3 cards to swap. The AI draws too. Two of the defense's final cards flip face-up.
+3. **Choose the play.** After the draw, every card in your made hand (a pair gives 2, trips 3, two pair 4,
+   straight/flush/full house 5, high card 1) may be chosen as the play: tap a gold-edged card or press `P`. Each card
+   shows a `+` strength and a `-` weakness (the defense styles it beats and loses to); tap the (i) badge (or hold it, or
+   right-click) for its formation, routes and yards by defense. The wheel in the bottom panel previews the play's odds if you win.
+4. **SNAP.** A versus banner pits your hand against the defense's and stamps YOU WIN, DEFENSE WINS or PUSH. Then the wheel spins:
+   - **You win:** a gain wheel (positive yards only), times *your* hand multiplier (pair x1.1 up to straight flush x8, five of a kind x12).
+   - **You lose:** a loss wheel, times *their* multiplier. If their hand is 4 or more classes above yours it is a turnover with no spin.
+   - Wedges are sized by the play's real odds, bent by the defense's hidden style (the suit of its lead card: BLITZ, ZONE, MAN or BALANCED).
+
+The skill is in the draw, in reading the two face-up cards to guess the style, in choosing the play that suits it, and in tracking the
+shoe, whose strip under the tells shows copies left by rank. Controls: tap cards and buttons. Desktop shortcuts: `1`-`5` (mark a
+card while drawing), `P` (cycle the play), `Enter` (advance).
 
 **Live editing:** open the editor (`godot -e --path godot`), press `F5` to run, and keep **Debug > Synchronize Script
 Changes** ticked. Edited `.gd` files then reload inside the running game, so drawing and game logic changes show up
@@ -94,7 +91,7 @@ godot/
   scripts/
     engine/   mathx, sim (pocket, routes, resolvers, yardage, rules), evaluator, game_data
     game/     cards (deck, combos, jokers), defense_curve, drive
-    quant/    card-betting game: deck52, yard_curve, poker, lines, def_context, qgame
+    quant/    card-betting game: deck52, yard_curve, poker, def_context, qgame
     ui/       qmain + qcard_view (betting game); main, wheel_view, card_view (earlier prototype); field_view, px
   assets/     VT323 + Press Start 2P fonts (SIL OFL), wheel shader
   tests/      headless calibration and drive tests, UI autoplay with screenshots
@@ -108,10 +105,8 @@ godot --headless --path godot -s tests/calib.gd        # engine calibration (mea
 godot --headless --path godot -s tests/drive_test.gd   # 300 random drives: rules and scoring smoke test
 godot --path godot -s tests/autoplay.gd -- <out_dir>   # plays a drive through the UI and screenshots it
 godot --path godot -s tests/discard_test.gd -- <out_dir>
-godot --headless --path godot -s tests/quant_lab.gd    # math lab: pricing, edges, value of information (about 3 minutes)
-godot --headless --path godot -s tests/qgame_test.gd -- 5000 0.5   # snaps per policy and the bet-multiplier share: edge by strategy (hand strength, read, choice, peek)
+godot --headless --path godot -s tests/qgame_test.gd -- 300   # plays whole runs per bet strategy: touchdowns, net yards, how drives end
 godot --headless --path godot -s tests/fit_check.gd    # bronze plays vs real football per-play averages, by tier and family
-godot --headless --path godot -s tests/card_ev.gd      # expected yards per card and blind vs informed bet EV
 godot --path godot --resolution 540x960 -s tests/qshot.gd -- <out_dir>   # plays one down through the UI, screenshots each phase
 godot --path godot --resolution 540x960 -s tests/anim_shots.gd -- <out_dir>   # one down mid-animation: deal, lift, redeal, flips, verdict
 godot --path godot --resolution 540x960 -s tests/cards_shots.gd -- <out_dir>   # joker hand, play choice and the card info popup
@@ -122,7 +117,6 @@ godot --path godot --resolution 540x960 -s tests/qgallery.gd -- <out_dir>   # re
 ```
 
 `godot/scripts/quant/` holds the card-betting game: `deck52` (52 plays from a few curve constants each plus the two
-jokers, with the play info in `data/plays.json`), `yard_curve` (closed-form yardage distribution), `poker`, `lines` (the five yardage lines) and
-`def_context` (hidden defense styles). It now powers the playable game via `qgame.gd` and `ui/qmain.gd`.
+jokers, with the play info in `data/plays.json`), `yard_curve` (closed-form yardage distribution), `poker`, `def_context` (hidden defense styles). It now powers the playable game via `qgame.gd` and `ui/qmain.gd`.
 
 Run `godot --headless --path godot --import` once after adding new `class_name` scripts.

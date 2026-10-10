@@ -23,8 +23,8 @@ func _init() -> void:
 	for attempt in 12:
 		q._on_stand()
 		await _wait(1.4)
-		q._on_bet_row(2)
-		q._on_stake(1.0)
+
+
 		q._on_show()
 		await _wait(0.6)
 		_shot("s0a_versus_in" if q.last_res.win == 1 else "s0a_versus_loss_in")
@@ -41,7 +41,7 @@ func _init() -> void:
 			_shot("s4_banner")
 			await _wait(2.0)
 			_shot("s5_settled")
-			print("win: ", q.last_res.event, " yards ", q.last_res.yards, " delta ", q.last_res.delta)
+			print("win: ", q.last_res.event, " yards ", q.last_res.yards, " net ", q.last_res.yards)
 			quit()
 			return
 		await _wait(2.4)

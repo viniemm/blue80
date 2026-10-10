@@ -27,13 +27,13 @@ func _paint() -> void:
 	var cat := int(Save.rec("best_cat", -1))
 	var rows := [
 		["RUNS PLAYED", str(int(Save.rec("runs")))],
-		["BUSTED", str(int(Save.rec("busts")))],
-		["PEAK CHIPS", "%.1f" % float(Save.rec("peak", 0.0))],
+		["RUNS FINISHED", str(int(Save.rec("completed")))],
 		["MOST TD IN A RUN", str(int(Save.rec("best_tds")))],
 		["TOTAL TOUCHDOWNS", str(int(Save.rec("tds")))],
+		["BEST NET YARDS", "%+d" % int(Save.rec("best_yards", 0)) if int(Save.rec("runs")) > 0 else "-"],
+		["BIGGEST DOWN", "%+d YDS" % int(Save.rec("biggest")) if snaps > 0 else "-"],
 		["SNAPS PLAYED", str(snaps)],
 		["HANDS WON", "%.1f%%" % (100.0 * float(Save.rec("wins")) / snaps) if snaps > 0 else "-"],
-		["BIGGEST SNAP", "%+.1f" % float(Save.rec("biggest", 0.0)) if snaps > 0 else "-"],
 		["BEST HAND WON", Poker.CAT_NAMES[cat] if cat >= 0 else "-"],
 	]
 	var y := 62.0

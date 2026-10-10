@@ -31,7 +31,7 @@ func _init() -> void:
 	_shot("a3_redeal_mid")
 	await _wait(1.6)
 	_shot("a4_bet")
-	q._on_bet_row(2)
+
 	q._on_show()
 	await _wait(0.3)
 	_shot("a5_suspense")
@@ -39,5 +39,5 @@ func _init() -> void:
 	_shot("a6_verdict")
 	await _wait(1.5)
 	_shot("a7_settled")
-	print("result: ", q.last_res.get("event"), " delta ", q.last_res.get("delta"), " bank ", q.g.bankroll, " shown ", q.shown_bank)
+	print("result: ", q.last_res.get("event"), " yards ", q.last_res.get("yards"), " net ", q.g.yards_total)
 	quit()

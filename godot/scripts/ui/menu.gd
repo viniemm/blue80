@@ -36,9 +36,8 @@ func _paint() -> void:
 	if int(t * 3.0) % 2 == 0:
 		Px.text(self, 58, y, ">", 2, Px.GOLD)
 		Px.text(self, 294, y, "<", 2, Px.GOLD)
-	var best := float(Save.rec("peak", 0.0))
-	if best > 0.0:
-		Px.text_center(self, W / 2.0, 574, "BEST PEAK %.1f   MOST TD %d   RUNS %d" % [best, int(Save.rec("best_tds")), int(Save.rec("runs"))], 0, Px.DIM)
+	if int(Save.rec("runs")) > 0:
+		Px.text_center(self, W / 2.0, 574, "MOST TD %d   BEST %+d YDS   RUNS %d" % [int(Save.rec("best_tds")), int(Save.rec("best_yards", 0)), int(Save.rec("runs"))], 0, Px.DIM)
 	Px.text_center(self, W / 2.0, 606, "v0.2", 0, Px.LINE)
 
 

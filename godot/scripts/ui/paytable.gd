@@ -26,6 +26,7 @@ func _ready() -> void:
 	add_back("MENU")
 
 
+
 func _paint() -> void:
 	banner("PAYTABLE")
 	var y := 50.0
@@ -48,13 +49,8 @@ func _paint() -> void:
 		Px.text_right(self, 340, y, "%.1f" % st.sd, 1, Px.DIM)
 		y += 15.0
 	y += 8.0
-	Px.text(self, 14, y, "YARDAGE LINES", 2, Px.GOLD)
-	Px.text_right(self, 340, y + 1, "HOUSE CHANCE", 0, Px.DIM)
+	Px.text(self, 14, y, "THE WHEEL", 2, Px.GOLD)
 	y += 18.0
-	for k in 5:
-		Px.text(self, 20, y, Lines.NAMES[k], 1, Px.FG)
-		Px.text_right(self, 340, y, "%d%%" % int(Lines.P[k] * 100.0), 1, Px.ROYAL)
-		y += 15.0
-	y += 8.0
-	Px.text(self, 14, y, "Payout = odds x hand multiplier, after a %d%% house cut." % int(QGame.VIG * 100.0), 0, Px.DIM)
-	Px.text(self, 14, y + 13, "Ante %.0f x multiplier decides the hand. Max stake %d." % [QGame.ANTE, int(QGame.TABLE_MAX)], 0, Px.DIM)
+	Px.text(self, 20, y, "WIN: the gain wheel x YOUR multiplier.", 1, Px.GREEN)
+	Px.text(self, 20, y + 15, "LOSE: the loss wheel x THEIR multiplier.", 1, Px.RED)
+	Px.text(self, 20, y + 30, "%d+ classes down is a turnover, no spin." % QGame.PICK_SIX_GAP, 1, Px.DIM)

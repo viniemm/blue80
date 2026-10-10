@@ -33,7 +33,7 @@ func _init() -> void:
 	_shot("c1_draw_focus")
 	q._on_stand()
 	await _wait(2.0)
-	q._on_bet_row(2)
+
 	await _wait(0.3)
 	_shot("c2_bet_choose")
 	var other: int = q.g.eligible()[0] if q.g.eligible()[0] != q.g.play_idx else q.g.eligible()[1]

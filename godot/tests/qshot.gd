@@ -14,8 +14,8 @@ func _init() -> void:
 	await process_frame
 	scene._on_draw()
 	await process_frame
-	scene._on_bet_row(2)
-	scene._on_stake(1.0)
+
+
 	await process_frame
 	_save("%s/q2_bet.png" % out_dir)
 	scene._on_show()

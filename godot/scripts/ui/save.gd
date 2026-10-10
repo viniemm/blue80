@@ -40,18 +40,18 @@ static func commit_run(g: QGame) -> void:
 	if g.history.is_empty():
 		return
 	var wins := 0
-	var biggest := 0.0
+	var biggest := 0
 	for h in g.history:
 		wins += 1 if h.win == 1 else 0
-		biggest = maxf(biggest, float(h.delta))
+		biggest = maxi(biggest, int(h.yards))
 	set_rec("runs", int(rec("runs")) + 1)
-	set_rec("busts", int(rec("busts")) + (1 if g.phase == "OVER" else 0))
+	set_rec("completed", int(rec("completed")) + (1 if g.phase == "OVER" else 0))
 	set_rec("snaps", int(rec("snaps")) + g.history.size())
 	set_rec("wins", int(rec("wins")) + wins)
 	set_rec("tds", int(rec("tds")) + g.tds)
 	set_rec("best_tds", maxi(int(rec("best_tds")), g.tds))
-	set_rec("peak", maxf(float(rec("peak", 0.0)), g.peak))
-	set_rec("biggest", maxf(float(rec("biggest", 0.0)), biggest))
+	set_rec("best_yards", maxi(int(rec("best_yards", -9999)), g.yards_total))
+	set_rec("biggest", maxi(int(rec("biggest")), biggest))
 	set_rec("best_cat", maxi(int(rec("best_cat", -1)), g.best_cat))
 	flush()
 

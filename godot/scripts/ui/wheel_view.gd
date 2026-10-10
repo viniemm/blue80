@@ -150,36 +150,60 @@ func skip() -> void:
 		_finish()
 
 
-## Slices for a play's yardage curve, ordered disaster -> jackpot. Each carries its yard range so a result can be placed.
-static func slices_for(th: Dictionary, goal: int) -> Array:
+## Average of a survival function over several curves (one curve = the real style, four = the house view).
+static func _surv(thetas: Array, t: int) -> float:
+	var acc := 0.0
+	for th in thetas:
+		acc += YardCurve.survival(th, t)
+	return acc / float(thetas.size())
+
+
+## Slices for a play's gain, ordered small -> jackpot. The gain wheel holds positive yardage only: the play's curve
+## conditioned on gaining at least a yard, averaged over `thetas`. `goal` is the yards to the end zone, so the top
+## wedge is the touchdown. Each slice carries its yard range so a result can be placed.
+static func slices_for(thetas: Array, goal: int) -> Array:
 	var out: Array = []
 	var floor_p := 0.012                              # keep rare slices visible
-	out.append({"category": "Y_TO", "label": "TO", "pct": maxf(float(th.p_to), floor_p), "color": Color("d62828"), "lo": -999, "hi": -999})
-	out.append({"category": "Y_LOSS", "label": "LOSS", "pct": maxf(float(th.p_neg), floor_p), "color": Color("ff6a1a"), "lo": -998, "hi": -1})
 	var edges: Array = [1]
 	for e in [5, 10, 20, 35]:
 		if e < goal:
 			edges.append(e)
-	var zero := maxf(YardCurve.survival(th, 0) - YardCurve.survival(th, 1), floor_p)
-	out.append({"category": "Y_ZERO", "label": "0", "pct": zero, "color": Color("8c97c8"), "lo": 0, "hi": 0})
+	var base := maxf(_surv(thetas, 1), 0.0001)
 	var n := edges.size() + 1                         # gain bins plus the touchdown bin
 	for i in edges.size():
 		var lo: int = edges[i]
 		var hi: int = (edges[i + 1] - 1) if i + 1 < edges.size() else goal - 1
-		var p := YardCurve.survival(th, lo) - YardCurve.survival(th, hi + 1)
-		var label := "%d-%d" % [lo, hi] if hi - lo < 100 and i + 1 < edges.size() else "%d+" % lo
+		var p := (_surv(thetas, lo) - _surv(thetas, hi + 1)) / base
+		var label := "%d-%d" % [lo, hi] if i + 1 < edges.size() else "%d+" % lo
 		var k := float(i) / float(maxi(1, n - 1))
 		var col := Color("2fd160").lerp(Color("33c8ff"), clampf(k * 1.4, 0.0, 1.0))
 		out.append({"category": "Y_%d" % lo, "label": label, "pct": maxf(p, floor_p), "color": col, "lo": lo, "hi": hi})
-	out.append({"category": "Y_TD", "label": "TD", "pct": maxf(YardCurve.survival(th, goal), floor_p), "color": Color("ffe680"), "lo": goal, "hi": 9999})
+	out.append({"category": "Y_TD", "label": "TD", "pct": maxf(_surv(thetas, goal) / base, floor_p), "color": Color("ffe680"), "lo": goal, "hi": 9999})
 	return out
 
 
-static func category_for(slices: Array, yards: int, turnover: bool) -> String:
-	if turnover:
-		return "Y_TO"
+## Slices for a lost snap: how many yards it costs, small -> large, in reds.
+static func loss_slices_for(thetas: Array) -> Array:
+	var out: Array = []
+	var edges := [1, 3, 5, 8, 13]
+	for i in edges.size():
+		var lo: int = edges[i]
+		var hi: int = (edges[i + 1] - 1) if i + 1 < edges.size() else 999
+		var p := 0.0
+		for th in thetas:
+			p += YardCurve.loss_survival(th, lo) - (YardCurve.loss_survival(th, hi + 1) if hi < 999 else 0.0)
+		p /= float(thetas.size())
+		var label := "%d-%d" % [lo, hi] if hi < 999 else "%d+" % lo
+		if lo == hi - 0 or (hi - lo == 0):
+			label = str(lo)
+		var col := Color("ffb020").lerp(Color("d62828"), float(i) / float(edges.size() - 1))
+		out.append({"category": "L_%d" % lo, "label": label, "pct": maxf(p, 0.012), "color": col, "lo": lo, "hi": hi})
+	return out
+
+
+static func category_for(slices: Array, yards: int) -> String:
 	for s in slices:
-		if s.category != "Y_TO" and yards >= int(s.lo) and yards <= int(s.hi):
+		if yards >= int(s.lo) and yards <= int(s.hi):
 			return s.category
 	return slices[slices.size() - 1].category
 
