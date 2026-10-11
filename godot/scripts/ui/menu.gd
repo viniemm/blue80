@@ -31,7 +31,7 @@ func _paint() -> void:
 	draw_rect(Rect2(W / 2.0 - 112, 108, 224, 3), Px.GOLD)
 	draw_rect(Rect2(W / 2.0 - 112, 113, 224, 1), Px.RED)
 	ball(W / 2.0 - 22.0, 138.0 - absf(sin(t * 3.0)) * 10.0, 3)
-	Px.text_center(self, W / 2.0, 176, "WIN HANDS. READ THE DEFENSE. BET YARDS.", 0, Px.DIM)
+	Px.text_center(self, W / 2.0, 176, "WIN HANDS. READ THE OTHER SIDE. SPIN THE WHEEL.", 0, Px.DIM)
 	var y := 214 + hot * 40 + 9
 	if int(t * 3.0) % 2 == 0:
 		Px.text(self, 58, y, ">", 2, Px.GOLD)

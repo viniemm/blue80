@@ -22,9 +22,8 @@ func _init() -> void:
 	await _wait(1.5)
 	var all := Deck52.build_all()
 	# two aces, a joker, a seven and a three: the joker makes trips, so the aces and the joker may all be played
-	q.g.mine = [all[13 + 12], all[26 + 12], all[52], all[39 + 5], all[2]]
+	q.g.mine = [all[13 + 12], all[26 + 12], all[52], all[39 + 5], all[2], all[7], all[20]]
 	q.g.my_eval = Poker.evaluate(q.g.mine)
-	q.g.play_idx = q.g.my_eval.lead_idx
 	print("hand: ", Poker.CAT_NAMES[q.g.my_eval.cat], "  eligible ", q.g.eligible(), "  wild as ", q.g.my_eval.wild)
 	q._rebuild_cards()
 	await _wait(1.6)
@@ -44,7 +43,7 @@ func _init() -> void:
 	var ev := InputEventMouseButton.new()
 	ev.button_index = MOUSE_BUTTON_LEFT
 	ev.pressed = true
-	ev.position = Vector2(54, 58)
+	ev.position = Vector2(40, 58)
 	q.my_views[0]._gui_input(ev)
 	ev = ev.duplicate()
 	ev.pressed = false

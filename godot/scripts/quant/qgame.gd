@@ -1,23 +1,30 @@
 class_name QGame
 extends RefCounted
-## One run: DRIVES drives of four downs, scored in touchdowns. Yardage is the only currency, and the wheel decides it.
-##   DRAW   deal 5 each, you discard up to 3
-##   BET    the AI draws, 2 defense cards flip face-up; you pick which card of your made hand is the play, then SNAP
-##   RESULT showdown. Win the hand: the wheel spins a gain (positive yards only) times YOUR hand multiplier. Lose it:
-##          the wheel spins a loss times THEIR multiplier. Losing by PICK_SIX_GAP or more hand classes is a turnover.
-## A defense card's suit is a style (BLITZ / ZONE / MAN / BALANCED); the style of its lead card bends your play's curve.
-## Cards come from a persistent multi-deck shoe, reshuffled only when it runs low, so what has been dealt tells you
-## something about what is left.
+## A game against the computer: drives alternate (you on offense, then the computer, and so on) and each side's
+## touchdowns are its score. Yardage is the only currency, and the wheel decides it.
+##   DRAW   deal HAND_SIZE cards each, you discard up to MAX_DISCARDS
+##   BET    the computer draws, FACE_UP of its cards flip face-up; you SELECT which card of your made hand to use
+##          (offense: the play; defense: the defensive call, whose suit is the style), then SNAP
+##   RESULT showdown. The offense wins when its hand beats the defense's: the wheel spins a gain (positive yards only)
+##          times the offense's hand multiplier. Otherwise the wheel spins a loss times the DEFENSE's multiplier, and a
+##          loss by PICK_SIX_GAP or more hand classes is a turnover with no spin.
+## The defensive style (BLITZ / ZONE / MAN / BALANCED) is the suit of the defense's chosen card and bends the offense's
+## curve. Cards come from a persistent shoe, reshuffled only when it runs low, so what has been dealt tells you
+## something about what is left. Deck count, hand size and the rest live in data/config.json (see GameConfig).
 
-const DRIVES := 6
-const PICK_SIX_GAP := 4          # lose the hand by this many classes or more and it is a turnover
 const STYLE_OF_SUIT := ["BLITZ", "ZONE", "MAN", "BALANCED"]
-const STYLE_STRENGTH := 2.0
-const DECKS := 4
-const RESHUFFLE_AT := 48         # reshuffle the shoe when fewer than this many cards remain before a deal
+
+static var DECKS: int = GameConfig.get_int("decks", 1)
+static var HAND_SIZE: int = GameConfig.get_int("hand_size", 7)
+static var MAX_DISCARDS: int = GameConfig.get_int("max_discards", 3)
+static var FACE_UP: int = GameConfig.get_int("face_up", 2)
+static var RESHUFFLE_AT: int = GameConfig.get_int("reshuffle_at", 20)    # reshuffle when fewer cards remain before a deal
+static var DRIVES_PER_SIDE: int = GameConfig.get_int("drives_per_side", 3)
+static var PICK_SIX_GAP: int = GameConfig.get_int("pick_six_gap", 4)    # lose the hand by this many classes: turnover
+static var STYLE_STRENGTH: float = GameConfig.get_float("style_strength", 2.0)
 
 var rng := RandomNumberGenerator.new()
-var cards: Array                 # the 52 distinct plays plus the 2 jokers
+var cards: Array                 # one deck: the 52 distinct plays plus the 2 jokers
 var phase := "DRAW"              # DRAW -> BET -> RESULT -> (DRAW | OVER)
 var shoe: Array = []
 var shoe_pos := 0
@@ -25,16 +32,19 @@ var seen_id := {}                # card id -> copies the player has seen since t
 var shuffles := 0
 var mine: Array = []
 var theirs: Array = []
-var _def_seen: Array = []        # which defense cards the player has seen
+var _def_seen: Array = []        # which of the computer's cards the player has seen
 var face_up: Array = []          # indices into `theirs` that are visible
 var my_eval: Dictionary = {}
 var their_eval: Dictionary = {}
-var play_idx := 0                # which of your cards runs the play (any card in the made hand may be chosen)
-var st := {}                     # down, distance, yardline_to_opponent_goal
+var play_idx := -1               # the card YOU selected (-1 until you choose; you must pick before the snap)
+var cpu_idx := -1                # the card the computer chose
+var player_off := true           # true while you have the ball
+var st := {}                     # down, distance, yardline_to_opponent_goal (distance to the goal being attacked)
 var drive_no := 1
-var tds := 0
-var yards_total := 0             # net yards over the run
-var best_cat := -1               # best hand category won this run
+var tds := 0                     # your touchdowns
+var cpu_tds := 0
+var yards_total := 0             # your net yards on your own drives
+var best_cat := -1               # best hand category won this game
 var last: Dictionary = {}
 var history: Array = []          # one record per snap, for analytics
 var log: Array = []
@@ -49,6 +59,10 @@ func _init(seed_value: int = 0) -> void:
 	cards = Deck52.build_all()
 	_shuffle_shoe()
 	_new_drive()
+
+
+static func total_drives() -> int:
+	return DRIVES_PER_SIDE * 2
 
 
 # ------------------------------------------------------------------ the shoe
@@ -82,7 +96,7 @@ func shoe_left() -> int:
 	return shoe.size() - shoe_pos
 
 
-## Copies of this card the player has not seen (some may be in the defense's hidden discards).
+## Copies of this card the player has not seen (some may be in the computer's hidden cards).
 func copies_left(card_id: int) -> int:
 	return maxi(0, DECKS - int(seen_id.get(card_id, 0)))
 
@@ -98,62 +112,58 @@ func wild_left() -> int:
 	return copies_left(52) + copies_left(53)
 
 
-## Every unseen copy, expanded, for probability work (the test analyst samples from this).
-func unseen_pool() -> Array:
-	var out: Array = []
-	for c in cards:
-		for k in copies_left(c.id):
-			out.append(c)
-	return out
-
-
 # ------------------------------------------------------------------ setup
 func _new_drive() -> void:
 	st = {"down": 1, "distance": 10.0, "yardline_to_opponent_goal": 75.0, "period": 1, "clock_seconds": 900,
-			"possession_team": "EAST"}
+			"possession_team": "EAST" if player_off else "WEST"}
 	_deal()
 
 
 func _deal() -> void:
-	if shoe_left() < RESHUFFLE_AT:
+	if shoe_left() < maxi(RESHUFFLE_AT, 2 * (HAND_SIZE + MAX_DISCARDS)):
 		_shuffle_shoe()
 	mine = []
 	theirs = []
-	for i in 5:
+	for i in HAND_SIZE:
 		var c := _take()
 		mine.append(c)
 		_see(c)
-	for i in 5:
+	for i in HAND_SIZE:
 		theirs.append(_take())
-	_def_seen = [false, false, false, false, false]
+	_def_seen = []
+	for i in HAND_SIZE:
+		_def_seen.append(false)
 	face_up = []
 	my_eval = Poker.evaluate(mine)
-	play_idx = my_eval.lead_idx
 	their_eval = {}
+	play_idx = -1
+	cpu_idx = -1
 	phase = "DRAW"
 
 
 # ------------------------------------------------------------------ the draw
-## Discard the hand positions in `idx` (up to 3), the AI draws, and two defense cards flip face-up.
+## Discard the hand positions in `idx` (up to MAX_DISCARDS), the computer draws, FACE_UP of its cards flip face-up and
+## it makes its own choice. You have nothing selected until you tap a card.
 func draw(idx: Array) -> void:
 	if phase != "DRAW":
 		return
-	for i in idx.slice(0, 3):
+	for i in idx.slice(0, MAX_DISCARDS):
 		var c := _take()
 		mine[i] = c
 		_see(c)
-	for i in Poker.discards(theirs):
-		theirs[i] = _take()                      # the AI's discards and new cards stay unseen
+	for i in Poker.discards(theirs, MAX_DISCARDS):
+		theirs[i] = _take()                      # the computer's discards and new cards stay unseen
 	my_eval = Poker.evaluate(mine)
-	play_idx = my_eval.lead_idx
 	their_eval = Poker.evaluate(theirs)
-	var order := [0, 1, 2, 3, 4]
+	play_idx = -1
+	cpu_idx = _cpu_choose()
+	var order: Array = range(HAND_SIZE)
 	for i in range(order.size() - 1, 0, -1):
 		var j := rng.randi_range(0, i)
 		var t = order[i]
 		order[i] = order[j]
 		order[j] = t
-	face_up = order.slice(0, 2)
+	face_up = order.slice(0, FACE_UP)
 	face_up.sort()
 	for i in face_up:
 		_def_seen[i] = true
@@ -161,22 +171,40 @@ func draw(idx: Array) -> void:
 	phase = "BET"
 
 
-func skip_draw() -> void:
-	draw([])
+## The computer's pick. On offense it runs the card with the best average yards over the four defense styles (it cannot
+## see your call); on defense it simply calls with the lead card of its best hand.
+func _cpu_choose() -> int:
+	if player_off:
+		return int(their_eval.lead_idx)
+	var best: int = their_eval.lead_idx
+	var best_v := -1e9
+	for i in their_eval.eligible:
+		var v := 0.0
+		for style in DefContext.STYLES:
+			v += YardCurve.mean(DefContext.apply(theirs[i].theta, style)) * 0.25
+		if v > best_v:
+			best_v = v
+			best = int(i)
+	return best
 
 
 # ------------------------------------------------------------------ info for the UI
+func has_selection() -> bool:
+	return play_idx >= 0
+
+
+## The card you selected, or an empty dictionary before you choose.
 func my_lead() -> Dictionary:
-	return mine[play_idx]
+	return mine[play_idx] if play_idx >= 0 else {}
 
 
-## Hand positions that may be chosen as the play: every card in the made combination, plus any joker.
+## Hand positions you may select: every card in your best five, plus any joker.
 func eligible() -> Array:
 	return my_eval.eligible
 
 
 func set_play(i: int) -> void:
-	if (phase == "DRAW" or phase == "BET") and my_eval.eligible.has(i):
+	if phase == "BET" and my_eval.eligible.has(i):
 		play_idx = i
 
 
@@ -188,50 +216,63 @@ func style_of(card: Dictionary) -> String:
 	return STYLE_OF_SUIT[card.suit] if card.suit < 4 else "WILD"
 
 
-## What the defense's lead card is, only known after the showdown (or by cheating in tests).
-func hidden_style() -> String:
-	return STYLE_OF_SUIT[their_eval.lead_suit]           # a joker leading stands in for some suit
+## The defensive style in play. Computer on defense: the suit of its lead card (hidden until the snap). You on defense:
+## the suit of the card you called with (a joker calls BALANCED).
+func style_in_play() -> String:
+	if player_off:
+		return STYLE_OF_SUIT[their_eval.lead_suit]
+	var c: Dictionary = my_lead()
+	return STYLE_OF_SUIT[c.suit] if (not c.is_empty() and c.suit < 4) else "BALANCED"
+
+
+## The play being run, whoever is on offense.
+func offense_card() -> Dictionary:
+	return my_lead() if player_off else theirs[cpu_idx]
 
 
 # ------------------------------------------------------------------ showdown
 func showdown() -> Dictionary:
-	if phase != "BET":
+	if phase != "BET" or (player_off and play_idx < 0) or (not player_off and play_idx < 0):
 		return {}
-	for i in 5:                                   # the defense hand is turned over
+	for i in HAND_SIZE:                           # the computer's hand is turned over
 		if not _def_seen[i]:
 			_def_seen[i] = true
 			_see(theirs[i])
-	var mine_score: int = my_eval.score
-	var their_score: int = their_eval.score
-	var my_m := my_mult()
-	var their_m := Poker.multiplier(int(their_eval.cat))
-	var res := {"win": 0, "my_cat": my_eval.cat, "their_cat": their_eval.cat, "style": hidden_style(),
-			"my_lead": my_lead(), "their_lead": their_eval.lead, "my_mult": my_m, "their_mult": their_m,
+	var off_eval: Dictionary = my_eval if player_off else their_eval
+	var def_eval: Dictionary = their_eval if player_off else my_eval
+	var off_m := Poker.multiplier(int(off_eval.cat))
+	var def_m := Poker.multiplier(int(def_eval.cat))
+	var style := style_in_play()
+	var play := offense_card()
+	var res := {"player_off": player_off, "off_win": 0, "win": 0, "my_cat": my_eval.cat, "their_cat": their_eval.cat,
+			"style": style, "play": play, "my_lead": my_lead(), "their_lead": theirs[cpu_idx],
+			"my_mult": Poker.multiplier(int(my_eval.cat)), "their_mult": Poker.multiplier(int(their_eval.cat)),
 			"spin": 0, "spin_kind": "none", "mult": 1.0, "yards": 0, "turnover": false, "event": ""}
-	if mine_score == their_score:
+	if off_eval.score == def_eval.score:
 		res.event = "PUSH"
 		return _settle(res)
-	var lead := my_lead()
-	var theta_true := DefContext.apply(lead.theta, res.style)
-	if mine_score > their_score:
-		res.win = 1
+	var theta_true := DefContext.apply(play.theta, style)
+	if off_eval.score > def_eval.score:
+		res.off_win = 1
 		res.spin_kind = "gain"
 		res.spin = YardCurve.sample_gain(theta_true, rng)             # the wheel: positive yards only
-		res.mult = my_m
-		res.yards = int(round(float(res.spin) * my_m))
-		best_cat = maxi(best_cat, int(my_eval.cat))
+		res.mult = off_m
+		res.yards = int(round(float(res.spin) * off_m))
 	else:
-		res.win = -1
-		var gap: int = int(their_eval.cat) - int(my_eval.cat)
+		res.off_win = -1
+		var gap: int = int(def_eval.cat) - int(off_eval.cat)
 		if gap >= PICK_SIX_GAP:
 			res.event = "PICK SIX"
 			res.turnover = true
 		else:
 			res.spin_kind = "loss"
 			res.spin = YardCurve.sample_loss(theta_true, rng)
-			res.mult = their_m
-			res.yards = -int(round(float(res.spin) * their_m))
+			res.mult = def_m
+			res.yards = -int(round(float(res.spin) * def_m))
 			res.event = "LOSS"
+	res.win = res.off_win if player_off else -res.off_win              # from YOUR side
+	if res.win == 1:
+		best_cat = maxi(best_cat, int(my_eval.cat))
 	_advance_field(res)
 	return _settle(res)
 
@@ -244,12 +285,15 @@ func _advance_field(res: Dictionary) -> void:
 	res.drive_over = false
 	if res.turnover:
 		res.drive_over = true
-		res.event = res.event if res.win == -1 else "TURNOVER"
+		res.event = res.event if res.off_win == -1 else "TURNOVER"
 		return
 	if yl <= 0.0:
 		res.event = "TOUCHDOWN"
 		res.drive_over = true
-		tds += 1
+		if player_off:
+			tds += 1
+		else:
+			cpu_tds += 1
 		st.yardline_to_opponent_goal = 0.0
 		return
 	if yl >= 100.0:
@@ -260,7 +304,7 @@ func _advance_field(res: Dictionary) -> void:
 	if float(y) >= float(st.distance):
 		st.down = 1
 		st.distance = minf(10.0, yl)
-		if res.win == 1:
+		if res.off_win == 1:
 			res.event = "FIRST DOWN"
 	else:
 		st.down += 1
@@ -271,23 +315,32 @@ func _advance_field(res: Dictionary) -> void:
 
 
 func _settle(res: Dictionary) -> Dictionary:
-	yards_total += int(res.yards)
+	if player_off:
+		yards_total += int(res.yards)
 	if not res.has("drive_over"):
 		res["drive_over"] = false
-	history.append({"lead_id": my_lead().id, "style": res.style, "win": res.win, "yards": res.yards,
+	history.append({"lead_id": res.play.id, "style": res.style, "win": res.win, "yards": res.yards, "player_off": player_off,
 			"my_cat": res.my_cat, "their_cat": res.their_cat})
-	log.push_front("%s: %s %+d yds" % [res.event, my_lead().name, res.yards])
+	log.push_front("%s: %s %+d yds" % [res.event, res.play.name, res.yards])
 	last = res
-	phase = "OVER" if (res.drive_over and drive_no >= DRIVES) else "RESULT"
+	phase = "OVER" if (res.drive_over and drive_no >= total_drives()) else "RESULT"
 	return res
 
 
-## Move on after RESULT: a fresh down, or a new drive if the last one ended.
+## "WIN", "LOSS" or "TIE" once the game is over.
+func outcome() -> String:
+	if tds == cpu_tds:
+		return "TIE"
+	return "WIN" if tds > cpu_tds else "LOSS"
+
+
+## Move on after RESULT: a fresh down, or the next drive (the ball changes sides) if the last one ended.
 func next() -> void:
 	if phase != "RESULT":
 		return
 	if last.get("drive_over", false):
 		drive_no += 1
+		player_off = not player_off
 		_new_drive()
 	else:
 		_deal()

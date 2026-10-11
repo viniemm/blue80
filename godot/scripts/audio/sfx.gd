@@ -119,12 +119,6 @@ static func play_music(music: String) -> void:
 		_start_music(music)
 
 
-static func stop_music() -> void:
-	_music_name = ""
-	if _music != null:
-		_fade_to(-80.0, 0.4, true)
-
-
 static func _start_music(music: String) -> void:
 	var st := _stream(MUSIC_DIR + music + ".wav", true)
 	if st == null or _music == null or not _music.is_inside_tree():
@@ -141,12 +135,3 @@ static func _start_music(music: String) -> void:
 		_music.volume_db = -80.0
 		_music.play())
 	_fade.tween_property(_music, "volume_db", MUSIC_DB, 0.8)
-
-
-static func _fade_to(db: float, sec: float, stop_after: bool) -> void:
-	if _fade:
-		_fade.kill()
-	_fade = _music.create_tween()
-	_fade.tween_property(_music, "volume_db", db, sec)
-	if stop_after:
-		_fade.tween_callback(_music.stop)

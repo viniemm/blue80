@@ -18,6 +18,7 @@ func _init() -> void:
 
 	await process_frame
 	_save("%s/q2_bet.png" % out_dir)
+	scene._on_hand_tapped(scene.g.eligible()[0])
 	scene._on_show()
 	await process_frame
 	await process_frame

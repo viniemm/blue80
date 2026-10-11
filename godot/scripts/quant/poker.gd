@@ -1,6 +1,6 @@
 class_name Poker
 extends RefCounted
-## 5-card poker: hand ranking, the multiplier table, lead-card rule and a draw heuristic.
+## Poker: hand ranking of the best 5 cards out of any hand size, the multiplier table, the lead-card rule and a draw heuristic.
 ## A card here is any Dictionary with int `rank` (2..14) and int `suit` (0..3).
 
 const CAT_NAMES := ["HIGH CARD", "PAIR", "TWO PAIR", "TRIPS", "STRAIGHT", "FLUSH", "FULL HOUSE", "QUADS", "STRAIGHT FLUSH", "FIVE OF A KIND"]
@@ -13,6 +13,47 @@ const MULT := [1.0, 1.1, 1.4, 1.8, 2.3, 2.8, 3.5, 5.0, 8.0, 12.0]
 ##   the defense style; a joker's stand-in suit), eligible (hand positions that form the combination, any of which
 ##   may be chosen as the play) and wild (what each joker is standing in for).
 static func evaluate(hand: Array) -> Dictionary:
+	if hand.size() <= 5:
+		return _eval5(hand)
+	var best: Dictionary = {}
+	var best_combo: Array = []
+	for combo in _combos(hand.size()):
+		var sub: Array = []
+		for i in combo:
+			sub.append(hand[i])
+		var ev := _eval5(sub)
+		if best.is_empty() or ev.score > best.score:
+			best = ev
+			best_combo = combo
+	var eligible: Array = []
+	for i in best.eligible:
+		eligible.append(best_combo[i])
+	best["eligible"] = eligible
+	best["lead_idx"] = best_combo[best.lead_idx]
+	best["lead"] = hand[best.lead_idx]
+	return best
+
+
+static var _combo_cache := {}
+
+
+## Every way to pick 5 of n card positions (21 for 7 cards).
+static func _combos(n: int) -> Array:
+	if _combo_cache.has(n):
+		return _combo_cache[n]
+	var out: Array = []
+	for a in n:
+		for b in range(a + 1, n):
+			for c in range(b + 1, n):
+				for d in range(c + 1, n):
+					for e in range(d + 1, n):
+						out.append([a, b, c, d, e])
+	_combo_cache[n] = out
+	return out
+
+
+## Best 5-card hand with jokers standing in for any card (the old evaluate).
+static func _eval5(hand: Array) -> Dictionary:
 	var jk: Array = []
 	for i in hand.size():
 		if hand[i].get("joker", false):
@@ -136,56 +177,33 @@ static func multiplier(cat: int) -> float:
 	return MULT[cat]
 
 
-## Which hand positions to discard. Keeps made pairs/trips/quads, draws to a 4-flush or open 4-straight,
-## otherwise keeps the two highest cards.
-static func discards(hand: Array) -> Array:
+## Which hand positions the computer discards (at most `max_n`). It keeps the cards that make its best hand, any joker, and a
+## four-card flush draw, and throws away the lowest of the rest.
+static func discards(hand: Array, max_n: int = 3) -> Array:
 	var ev := evaluate(hand)
 	var cat: int = ev.cat
-	if cat >= 4 and cat != 7 or cat == 6:
-		return []
-	for c in hand:
-		if c.get("joker", false):                    # a wild card: keep it and the cards it combines with, draw the rest
-			var out: Array = []
-			for i in hand.size():
-				if not ev.eligible.has(i):
-					out.append(i)
-			return out
-	var counts := {}
-	for c in hand:
-		counts[c.rank] = int(counts.get(c.rank, 0)) + 1
-	var out: Array = []
-	if cat in [1, 2, 3, 7]:
-		for i in hand.size():
-			var keep := false
-			if cat == 2 or cat == 1 or cat == 3 or cat == 7:
-				keep = int(counts[hand[i].rank]) >= 2
-			if not keep:
-				out.append(i)
-		return out
-	# high card: look for 4-flush, then open-ended 4-straight
 	var by_suit := {}
 	for i in hand.size():
-		var s: int = hand[i].suit
-		if not by_suit.has(s):
-			by_suit[s] = []
-		by_suit[s].append(i)
-	for s in by_suit:
-		if by_suit[s].size() == 4:
-			for i in hand.size():
-				if not by_suit[s].has(i):
-					out.append(i)
-			return out
-	var order: Array = range(hand.size())
-	order.sort_custom(func(a, b): return hand[a].rank > hand[b].rank)
-	var rs: Array = hand.map(func(c): return c.rank)
-	rs.sort()
-	for skip in 5:
-		var four: Array = []
-		for i in 5:
-			if i != skip:
-				four.append(rs[i])
-		if four[3] - four[0] == 3 and four[0] > 2 and four[3] < 14:
-			for i in hand.size():
-				if hand[i].rank == rs[skip]:
-					return [i]
-	return [order[2], order[3], order[4]]
+		if not hand[i].get("joker", false):
+			var sv: int = hand[i].suit
+			if not by_suit.has(sv):
+				by_suit[sv] = 0
+			by_suit[sv] += 1
+	var draw_suit := -1
+	if cat < 5:
+		for sv in by_suit:
+			if by_suit[sv] >= 4:
+				draw_suit = sv
+	var cand: Array = []
+	for i in hand.size():
+		if ev.eligible.has(i) or hand[i].get("joker", false):
+			continue
+		var score: int = hand[i].rank
+		if draw_suit >= 0 and hand[i].suit == draw_suit:
+			score += 100
+		cand.append([score, i])
+	cand.sort_custom(func(x, y): return x[0] < y[0])
+	var out: Array = []
+	for k in mini(max_n, cand.size()):
+		out.append(cand[k][1])
+	return out

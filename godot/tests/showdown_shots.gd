@@ -25,6 +25,7 @@ func _init() -> void:
 		await _wait(1.4)
 
 
+		q._on_hand_tapped(q.g.eligible()[0])
 		q._on_show()
 		await _wait(0.6)
 		_shot("s0a_versus_in" if q.last_res.win == 1 else "s0a_versus_loss_in")

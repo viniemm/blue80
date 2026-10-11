@@ -94,7 +94,7 @@ func _draw() -> void:
 		elif win == -1:
 			shake_me = s
 	_plate(lx, py, "YOUR HAND", mine, mine_mult, Color("3d6bff"), my_state, shake_me)
-	_plate(rx, py, "DEFENSE", theirs, theirs_mult, Color("ff4d4d"), their_state, shake_them)
+	_plate(rx, py, "THEIR HAND", theirs, theirs_mult, Color("ff4d4d"), their_state, shake_them)
 	# VS pops between the plates
 	var vs := clampf((t - 0.45) / 0.2, 0.0, 1.0)
 	if vs > 0.0 and not decided:

@@ -6,7 +6,7 @@ const TIERS := [
 	["BRONZE", "2-6", Color("cd7f32")],
 	["SILVER", "7-10", Color("c0c8d8")],
 	["GOLD", "J Q K", Color("ffcc33")],
-	["PLATINUM", "A", Color("e8f0ff")],
+	["PLATINUM", "A", Color("3fd0dc")],
 ]
 
 var _tier_stats := {}

@@ -1,17 +1,17 @@
 # Blue 80
 
-A pixel-art football game built in Godot 4, now a quantitative card game: win poker hands to run football plays, and
-bet on how many yards each play gains. Edge comes from math: hand equity, reading the defense from partial
-information, and sizing bets.
+A pixel-art football card game built in Godot 4. Play the computer: win poker hands to run plays on offense or to
+call coverages on defense, and a wheel decides how many yards are gained or lost. Edge comes from math: hand equity,
+reading the other side from partial information, and counting a small shoe.
 
 ## Run
 
 Requires Godot 4.7 (`winget install GodotEngine.GodotEngine`).
 
 ```powershell
-godot --path godot                          # play the card-betting game
+godot --path godot                          # play the game
+godot --path godot res://scenes/quant.tscn  # jump straight into a game, skipping the menus
 godot -e --path godot                       # open the editor
-godot --path godot res://scenes/main.tscn   # the earlier card-drive prototype (play-card combos and jokers)
 ```
 
 ## Web build for testers (no Apple fee)
@@ -42,81 +42,75 @@ pauses with RESUME, RESTART RUN and MAIN MENU; a run left through the menu stays
 records (best touchdowns and net yards, hands won, best hand) and settings (CRT scanlines, shoe counter, fullscreen, also `F11`)
 persist in `user://blue80.cfg`. `godot --path godot res://scenes/quant.tscn` jumps straight into a run.
 
-## How the card-betting game plays
+## How the card game plays
 
-Win poker hands to run football plays; a wheel decides how many yards you gain or lose. There are no chips, no points
-and no betting: a run is 6 drives of four downs, scored in touchdowns.
+You play the computer. Drives alternate (3 each by default, four downs per drive) and each side's touchdowns are its score.
+When you have the ball you pick the **play**; when the computer has it you are on **defense** and pick the **defensive call**.
+Win poker hands to run football plays; a wheel decides how many yards are gained or lost. No chips, no points, no betting.
+
+Every number below (decks, hand size, discards, face-up tells, reshuffle point, drives per side, the turnover gap) lives in
+`godot/data/config.json` (read by `GameConfig`), so the rules can be changed without touching code.
 
 Each down:
-1. **Deal.** You and the defense each get 5 cards from a persistent 4-deck shoe (216 cards, reshuffled only when it runs low). There are 52 distinct plays: suit is the play
-   family (RUN, RPO, PASS, SHOT) and rank sets its tier (2-6 bronze, 7-10 silver, J/Q/K gold, A platinum), with
-   better expected yards but more variance at higher ranks. Two **jokers** (PHILLY SPECIAL, FLEA FLICKER) ride in every
-   deck as wild cards: they stand in for any card when you build a hand, and you may run one as a swingy trick play.
-2. **Draw.** Tap up to 3 cards to swap. The AI draws too. Two of the defense's final cards flip face-up.
-3. **Choose the play.** After the draw, every card in your made hand (a pair gives 2, trips 3, two pair 4,
-   straight/flush/full house 5, high card 1) may be chosen as the play: tap a gold-edged card or press `P`. Each card
-   shows a `+` strength and a `-` weakness (the defense styles it beats and loses to); tap the (i) badge (or hold it, or
-   right-click) for its formation, routes and yards by defense. The wheel in the bottom panel previews the play's odds if you win.
-4. **SNAP.** A versus banner pits your hand against the defense's and stamps YOU WIN, DEFENSE WINS or PUSH. Then the wheel spins:
-   - **You win:** a gain wheel (positive yards only), times *your* hand multiplier (pair x1.1 up to straight flush x8, five of a kind x12).
-   - **You lose:** a loss wheel, times *their* multiplier. If their hand is 4 or more classes above yours it is a turnover with no spin.
-   - Wedges are sized by the play's real odds, bent by the defense's hidden style (the suit of its lead card: BLITZ, ZONE, MAN or BALANCED).
+1. **Deal.** You and the computer each get 7 cards from a 1-deck shoe (52 plays plus 2 jokers; reshuffled when it runs low).
+   Suit is the play family (RUN, RPO, PASS, SHOT) and rank sets its tier (2-6 bronze: white with red or black details,
+   7-10 silver, J/Q/K gold, A platinum in a teal gem look), with better expected yards but more variance at higher ranks. The two
+   **jokers** (PHILLY SPECIAL, FLEA FLICKER) are wild: they stand in for any card when you build a hand.
+2. **Draw.** Tap up to 3 cards to swap. The computer draws too, and two of its cards flip face-up.
+3. **Select.** Your hand is the best five of your seven cards. Nothing is preselected: tap one of the gold-edged cards
+   yourself (a pair gives 2 choices, trips 3, straight/flush/full house 5, high card 1). **SNAP** in the middle of the wheel
+   stays locked until you do, and the strip below the wheel shows what is being called.
+   - **Offense:** the card is your play. Each card shows a `+` strength and a `-` weakness (the defense styles it beats and
+     loses to); tap the (i) badge (or hold it, or right-click) for its formation, routes and yards by defense. The wheel previews
+     the play's odds.
+   - **Defense:** the suit of the card you call with is your style (RUN = BLITZ, RPO = ZONE, PASS = MAN, SHOT = BALANCED, joker =
+     BALANCED). The computer's face-up cards show what it may run and what each fears.
+4. **SNAP.** A versus banner pits the hands against each other and stamps YOU WIN, THEY WIN or PUSH. The offense wins when its
+   hand beats the defense's, and then the wheel spins:
+   - **Offense wins:** a gain wheel (positive yards only), times the offense's hand multiplier (pair x1.1 up to straight flush x8).
+   - **Defense wins:** a loss wheel, times the defense's multiplier. If its hand is 5 or more classes higher it is a turnover with no spin.
+   - Wedges are sized by the play's real odds, bent by the defensive style.
 
-The skill is in the draw, in reading the two face-up cards to guess the style, in choosing the play that suits it, and in tracking the
-shoe, whose strip under the tells shows copies left by rank. Controls: tap cards and buttons. Desktop shortcuts: `1`-`5` (mark a
-card while drawing), `P` (cycle the play), `Enter` (advance).
+The skill is in the draw, in reading the face-up cards, in choosing the card that suits the situation, and in counting the small
+shoe (the strip under the tells shows copies left by rank). Controls: tap cards and buttons. Desktop shortcuts: `1`-`7` (mark a
+card while drawing, select one while choosing), `P` (cycle the selection), `Enter` (advance).
 
 **Live editing:** open the editor (`godot -e --path godot`), press `F5` to run, and keep **Debug > Synchronize Script
 Changes** ticked. Edited `.gd` files then reload inside the running game, so drawing and game logic changes show up
 immediately. Layout built in `main.gd`'s `_build_ui()` only runs at startup, so after changing positions just stop and
 press `F5` again (about a second). Text uses `canvas_items` stretching, so it stays sharp at any window size.
 
-## How the earlier card-drive prototype plays (main.tscn)
-
-- **Deck and hand:** a deck of 12 play cards, dealt 5 at a time. Each card has a suit (play family: RUN, QUICK, MID,
-  DEEP, PA, SCREEN) and a rank (how aggressive the call is).
-- **Combos** read the last two plays plus the card you are about to play: PAIR, TRIPS, STRAIGHT, BUILD-UP, RUN FAKE.
-  Each one visibly reshapes the wheel.
-- **Jokers:** three passive modifiers per run (less pressure, deeper routes, fewer fumbles, sharper defense curve...).
-- **Defense:** 10 defensive plays in 5 aggression tiers (deep shell to all-out). The defense picks from a probability
-  curve that moves with down, distance, field position and what it has seen you do. The curve is shown before the snap.
-- **Outcome wheel:** a continuous disaster-to-jackpot gradient sized by Monte Carlo odds for your card against the
-  defense mix. The real simulation result decides where the pointer lands.
-
 ## Layout
 
 ```
 godot/
-  data/       plays.json (52 play cards + 2 jokers: formations, routes, summaries, strength and weakness); older prototype JSON
+  data/       config.json (decks, hand size, discards, drives...), plays.json (52 play cards + 2 jokers:
+              formations, routes, summaries, strength and weakness)
   scripts/
-    engine/   mathx, sim (pocket, routes, resolvers, yardage, rules), evaluator, game_data
-    game/     cards (deck, combos, jokers), defense_curve, drive
-    quant/    card-betting game: deck52, yard_curve, poker, def_context, qgame
-    ui/       qmain + qcard_view (betting game); main, wheel_view, card_view (earlier prototype); field_view, px
-  assets/     VT323 + Press Start 2P fonts (SIL OFL), wheel shader
-  tests/      headless calibration and drive tests, UI autoplay with screenshots
-docs/DEVELOPMENT_PLAN.md   the math specification behind the simulation
+    quant/    game rules: game_config, deck52, yard_curve, poker, def_context, qgame
+    ui/       qmain (the game screen), qcard_view, wheel_view, field_view, versus_fx, card_detail, play_diagram,
+              app + menu / help / paytable / records / settings screens, save, px helpers
+    audio/    sfx (the static player for the generated sounds)
+  assets/     VT323 + Press Start 2P fonts (SIL OFL), wheel shader, generated audio
+  tests/      rules simulation, curve calibration, screenshot walkthroughs, asset generators
 ```
 
 ## Tests
 
 ```powershell
-godot --headless --path godot -s tests/calib.gd        # engine calibration (mean yards, completion, sack rates)
-godot --headless --path godot -s tests/drive_test.gd   # 300 random drives: rules and scoring smoke test
-godot --path godot -s tests/autoplay.gd -- <out_dir>   # plays a drive through the UI and screenshots it
-godot --path godot -s tests/discard_test.gd -- <out_dir>
-godot --headless --path godot -s tests/qgame_test.gd -- 300   # plays whole runs per bet strategy: touchdowns, net yards, how drives end
+godot --headless --path godot -s tests/qgame_test.gd -- 300   # plays whole games vs the computer: touchdowns each, win rate, how drives end
 godot --headless --path godot -s tests/fit_check.gd    # bronze plays vs real football per-play averages, by tier and family
 godot --path godot --resolution 540x960 -s tests/qshot.gd -- <out_dir>   # plays one down through the UI, screenshots each phase
 godot --path godot --resolution 540x960 -s tests/anim_shots.gd -- <out_dir>   # one down mid-animation: deal, lift, redeal, flips, verdict
 godot --path godot --resolution 540x960 -s tests/cards_shots.gd -- <out_dir>   # joker hand, play choice and the card info popup
+godot --path godot --resolution 540x960 -s tests/defense_shots.gd -- <out_dir>   # one down with the computer on offense
 godot --path godot --resolution 540x960 -s tests/showdown_shots.gd -- <out_dir>   # wheel spin, field animation and the result panel
 godot --path godot --resolution 540x960 -s tests/menu_shots.gd -- <out_dir>   # splash, every menu page and the pause overlay
 godot --path godot --resolution 540x960 -s tests/make_icon.gd   # redraws godot/icon.png
 godot --path godot --resolution 540x960 -s tests/qgallery.gd -- <out_dir>   # renders every card tier in every suit for a visual check
 ```
 
-`godot/scripts/quant/` holds the card-betting game: `deck52` (52 plays from a few curve constants each plus the two
-jokers, with the play info in `data/plays.json`), `yard_curve` (closed-form yardage distribution), `poker`, `def_context` (hidden defense styles). It now powers the playable game via `qgame.gd` and `ui/qmain.gd`.
+`godot/scripts/quant/` holds the game rules: `deck52` (52 plays from a few curve constants each plus the two
+jokers, with the play info in `data/plays.json`), `yard_curve` (closed-form yardage distribution), `poker`, `def_context` (defensive styles), and `qgame` (possession, drives, the showdown and the wheel yards), which `ui/qmain.gd` presents.
 
 Run `godot --headless --path godot --import` once after adding new `class_name` scripts.

@@ -32,6 +32,7 @@ func _init() -> void:
 	await _wait(1.6)
 	_shot("a4_bet")
 
+	q._on_hand_tapped(q.g.eligible()[0])
 	q._on_show()
 	await _wait(0.3)
 	_shot("a5_suspense")

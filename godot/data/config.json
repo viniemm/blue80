@@ -1,0 +1,11 @@
+{
+ "_notes": "Backend knobs for the card game. Edit and restart; nothing else needs changing. Keys starting with _ are ignored.",
+ "decks": 1,
+ "hand_size": 7,
+ "max_discards": 3,
+ "face_up": 2,
+ "reshuffle_at": 20,
+ "drives_per_side": 3,
+ "pick_six_gap": 5,
+ "style_strength": 2.0
+}

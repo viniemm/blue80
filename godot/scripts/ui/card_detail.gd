@@ -3,7 +3,7 @@ extends Control
 ## Full-screen popup with everything about one play card: formation sketch, personnel, routes, a one-line summary,
 ## which defense styles it likes and fears, and its expected yards against each. Tap anywhere to close.
 
-const TIER_COLORS := {"BRONZE": Color("cd7f32"), "SILVER": Color("c8d0de"), "GOLD": Color("ffcc33"), "PLATINUM": Color("e8f0ff"),
+const TIER_COLORS := {"BRONZE": Color("cd7f32"), "SILVER": Color("c8d0de"), "GOLD": Color("ffcc33"), "PLATINUM": Color("3fd0dc"),
 		"JOKER": Color("d46bff")}
 
 signal closed

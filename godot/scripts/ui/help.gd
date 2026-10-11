@@ -2,50 +2,51 @@ class_name HelpScreen
 extends PxScreen
 ## Paged rules. Left/Right to turn pages.
 
-const PAGES := [
+static var PAGES: Array = [
 	{"title": "THE GOAL", "body": [
-		"A run is %d drives of four downs each. Score as many touchdowns as you can. Yardage is the only currency: no chips, no points." % QGame.DRIVES,
-		"Each down you play poker, pick a play, and hit SNAP. A wheel then decides how many yards you gain or lose.",
-		"Win the hand and the wheel gains you yards. Lose it and the wheel costs you yards. Nothing is hidden about the odds, so the edge is in how you read them.",
+		"You play the computer. Drives alternate: %d each, four downs per drive. Whoever scores more touchdowns wins." % QGame.DRIVES_PER_SIDE,
+		"When you have the ball you choose the PLAY. When the computer has it you are on DEFENSE and choose the defensive CALL.",
+		"Yardage is the only currency. Each down you play poker, make your selection, and hit SNAP: a wheel then decides the yards.",
 	]},
 	{"title": "THE DEAL", "body": [
-		"You and the defense each get 5 cards from a 4-deck shoe. Tap up to 3 of yours to swap, then DRAW.",
-		"Your best poker hand sets your multiplier. Its lead card (the pair, the trips, or the high card) is the play you run.",
+		"You and the computer each get %d cards from a %d-deck shoe. Tap up to %d of yours to swap, then DRAW." % [QGame.HAND_SIZE, QGame.DECKS, QGame.MAX_DISCARDS],
+		"Your hand is the best five of your cards. Its multiplier is set by the poker class: pair x1.1, flush x2.8, quads x5 and so on.",
 		"Suit is the play family: RUN, RPO, PASS, SHOT. Rank is the tier: 2-6 bronze, 7-10 silver, J Q K gold, A platinum. Rarer tiers gain more, with more variance.",
 		"Hand classes, low to high: high card, pair, two pair, trips, straight, flush, full house, quads, straight flush, five of a kind.",
 	]},
 	{"title": "WILD CARDS", "body": [
-		"Two jokers, PHILLY SPECIAL and FLEA FLICKER, are shuffled into the shoe (one of each per deck).",
+		"Two jokers, PHILLY SPECIAL and FLEA FLICKER, are in the deck.",
 		"A joker stands in for any card, so it builds the strongest hand it can: a pair becomes trips, four of a kind becomes five of a kind.",
-		"If a joker is part of your best hand you may also run it as your play. Trick plays are swingy: big plays, and big risk.",
+		"If a joker is part of your best five you may also run it as your play. Trick plays are swingy: big plays, and big risk. As a defensive call a joker is BALANCED.",
 	]},
-	{"title": "CHOOSE YOUR PLAY", "body": [
-		"The cards that make up your best hand are the ones you may run: a pair gives 2 choices, trips 3, two pair 4, and a straight, flush or full house all 5. High card has only its top card.",
-		"After the draw, tap a gold-edged card to pick the play (or press P). The wheel odds change to match that card.",
-		"Each card shows a + strength and a - weakness: the defense styles it beats and loses to. Read the two face-up defense cards, then pick the play that fits.",
-		"Tap the (i) badge on any card, or hold it, for its formation, routes and expected yards against each defense.",
+	{"title": "CHOOSE YOUR CARD", "body": [
+		"Nothing is preselected. After the draw you must tap a gold card yourself; SNAP stays locked until you do.",
+		"The cards in your best five are the ones you may pick: a pair gives you 2 choices, trips 3, and a straight, flush or full house all 5. High card has only its top card.",
+		"On OFFENSE the card is your play. Each card shows a + strength and a - weakness: the defense styles it beats and loses to. The wheel previews its odds.",
+		"On DEFENSE the SUIT of your card is your style: RUN = BLITZ, RPO = ZONE, PASS = MAN, SHOT = BALANCED.",
 	]},
 	{"title": "THE WHEEL", "body": [
-		"After the draw, the wheel at the bottom shows this play's odds if you win. Hit SNAP and the hands are compared.",
-		"WIN the hand: the wheel spins a gain (positive yards only), times YOUR hand multiplier. A pair is x1.1, a flush x2.8, quads x5.",
-		"LOSE the hand: the wheel spins a loss, times THEIR multiplier. If their hand is %d or more classes above yours it is a turnover instead, with no spin." % QGame.PICK_SIX_GAP,
-		"Wedges are sized by the play's real odds against the defense's hidden style, so a play that suits the defense has a fatter gain wheel.",
+		"The comparison: the offense wins when its hand beats the defense's. Then the wheel spins a gain (positive yards only) times the offense's hand multiplier.",
+		"Otherwise the wheel spins a loss times the DEFENSE's multiplier. If the defense's hand is %d or more classes higher, it is a turnover instead, with no spin." % QGame.PICK_SIX_GAP,
+		"Wedges are sized by the play's real odds against the defensive style, so a play that suits the defense has a fatter gain wheel.",
+		"Tap (i) on any card, or hold it, for its formation, routes and yards against each defense.",
 	]},
-	{"title": "READ THE DEFENSE", "body": [
-		"Two of the defense's five cards flip face-up before you bet. The suit of its lead card is its hidden style, and the style bends your play's yardage on the wheel.",
+	{"title": "READ THE OTHER SIDE", "body": [
+		"After the draw, %d of the computer's cards flip face-up." % QGame.FACE_UP,
+		"When you are on offense its suit is its defensive style, and the style bends your play's yardage:",
 		"@styles",
-		"The two face-up cards also hint at how strong their hand is, which sets the multiplier you pay on a loss.",
+		"When you are on defense you see what it may run, with each card's weakness (-). Call the style it hates.",
 	]},
-	{"title": "COUNT THE SHOE", "body": [
-		"Cards come from a 4-deck shoe that reshuffles only when under %d cards remain." % QGame.RESHUFFLE_AT,
+	{"title": "COUNT THE DECK", "body": [
+		"With %d deck%s the shoe is small, so every card you see changes the odds. It reshuffles when under %d cards remain." % [QGame.DECKS, "" if QGame.DECKS == 1 else "s", QGame.RESHUFFLE_AT],
 		"The strip under the tells counts the cards you have seen, by rank. Green means richer than average, red means thinner.",
-		"A rank-rich shoe makes pairs and trips likelier for both hands, so it moves the odds of winning the hand.",
+		"If aces and kings are gone, big hands are less likely for both of you.",
 	]},
 	{"title": "QUANT TIPS", "body": [
-		"Your edge is choosing the card to keep and the play to run. You cannot size a bet, so every decision is about the wheel.",
-		"Read the two face-up defense cards to guess the style, then run the play whose strength matches it: its wheel will be fatter.",
-		"Count the shoe: it tells you how likely a big hand is for you (a better multiplier) and for them (a bigger loss).",
-		"A weak play with a big multiplier can beat a strong play with a small one.",
+		"Your decisions are the draw (what to keep), which card to select, and reading the face-up cards.",
+		"A weak play with a big multiplier can beat a strong play with a small one. A strong hand makes your gains bigger and the computer's gains on defense smaller.",
+		"Count the deck to guess the computer's hand. If it probably has a monster, protect yourself by drawing for a bigger class.",
+		"On defense, choose the style that is the weakness of the play it is most likely running.",
 	]},
 ]
 const STYLES := [

@@ -6,22 +6,6 @@ var sz := 132
 const RING_IN := 0.25
 const RING_OUT := 0.40
 const BULBS := 24
-const COLORS := {
-	"INTERCEPTION": Color("d62828"), "FUMBLE": Color("ff6a1a"), "LOSS": Color("ffb020"),
-	"FIELD_GOAL_MISSED": Color("d62828"), "NO_GAIN": Color("8c97c8"), "PUNT": Color("8c97c8"),
-	"GAIN": Color("2fd160"), "BIG_GAIN": Color("33c8ff"), "FIELD_GOAL_GOOD": Color("3cff7a"),
-	"TOUCHDOWN": Color("ffe680"),
-}
-const LABELS := {
-	"INTERCEPTION": "INTERCEPTION", "FUMBLE": "FUMBLE", "LOSS": "LOSS OF YARDS", "NO_GAIN": "NO GAIN",
-	"GAIN": "GAIN", "BIG_GAIN": "BIG GAIN", "TOUCHDOWN": "TOUCHDOWN", "FIELD_GOAL_GOOD": "FIELD GOAL GOOD",
-	"FIELD_GOAL_MISSED": "KICK MISSED", "PUNT": "PUNT",
-}
-const SHORT := {
-	"INTERCEPTION": "INT", "FUMBLE": "FUM", "LOSS": "LOSS", "NO_GAIN": "NO", "GAIN": "GAIN", "BIG_GAIN": "BIG",
-	"TOUCHDOWN": "TD", "FIELD_GOAL_GOOD": "FG", "FIELD_GOAL_MISSED": "MISS", "PUNT": "PUNT",
-}
-
 var slices: Array = []
 var angle := 0.0:
 	set(v):
@@ -41,7 +25,6 @@ var _vel := 0.0
 
 signal landed
 
-var marks: Array = []          # fractions of the circle where a bet line sits (drawn as gold ticks that turn with the wheel)
 var _tw: Tween
 var _final_angle := 0.0
 var _land_idx := 0
@@ -81,7 +64,7 @@ func set_slices(raw: Array) -> void:
 		acc += float(s.pct)
 		var end := acc / maxf(total, 0.001)
 		slices.append({"category": s.category, "pct": s.pct, "start": start, "end": end, "mid": (start + end) / 2.0,
-				"label": s.get("label", SHORT.get(s.category, "")), "color": s.get("color", COLORS.get(s.category, Color("7788aa"))),
+				"label": s.get("label", ""), "color": s.get("color", Color("7788aa")),
 				"lo": s.get("lo", 0), "hi": s.get("hi", 0)})
 	focus = -1
 	var cols := PackedColorArray()
@@ -208,21 +191,6 @@ static func category_for(slices: Array, yards: int) -> String:
 	return slices[slices.size() - 1].category
 
 
-## Where on the circle (0..1 clockwise from the first slice) a yardage line sits, interpolated inside its slice.
-func fraction_for(yards: int) -> float:
-	for s in slices:
-		if s.category == "Y_TO":
-			continue
-		if s.category == "Y_LOSS":
-			if yards < 0:
-				return float(s.start) + (float(s.end) - float(s.start)) * clampf(float(yards + 12) / 12.0, 0.0, 1.0)
-			continue
-		if yards >= int(s.lo) and yards <= int(s.hi):
-			var span := float(mini(int(s.hi), 120) + 1 - int(s.lo))
-			return float(s.start) + (float(s.end) - float(s.start)) * clampf(float(yards - int(s.lo)) / maxf(span, 1.0), 0.0, 1.0)
-	return 1.0
-
-
 func _process(delta: float) -> void:
 	_t += delta
 	_vel = (angle - _last_angle) / maxf(delta, 0.001)
@@ -268,14 +236,6 @@ func _on_overlay_draw() -> void:
 		elif (i + step) % 3 == 0:
 			col = Px.GOLD
 		_overlay.draw_rect(Rect2(roundf(p.x) - 1, roundf(p.y) - 1, 3, 3), col)
-	# bet-line ticks: they ride on the wheel, so you can see how far past the pointer the clear zone starts
-	for m in marks:
-		var ph: float = float(m) * TAU + angle
-		var dir := Vector2(sin(ph), -cos(ph))
-		var a := c + dir * (RING_IN - 0.03) * sz
-		var b := c + dir * (RING_OUT + 0.06) * sz
-		_overlay.draw_line(a, b, Color("060b22"), 4.0)
-		_overlay.draw_line(a, b, Px.GOLD, 2.0)
 	# pointer, flicking as ticks pass
 	var tick_pos := angle / TAU * 40.0
 	var flick := (tick_pos - floorf(tick_pos) - 0.5) * 5.0 if spinning else 0.0
