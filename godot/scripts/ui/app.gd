@@ -25,6 +25,8 @@ func _ready() -> void:
 	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	overlay.z_index = 100
 	add_child(overlay)
+	RenderingServer.set_default_clear_color(Px.BG)
+	resized.connect(_center_stage)
 	_apply_settings()
 	_show(_make("splash"))
 
@@ -60,6 +62,16 @@ func _show(s: Control) -> void:
 		Sfx.play_music("menu")
 	add_child(s)
 	move_child(s, 0)
+	_center_stage()
+
+
+## The layout is 360x640. On taller or wider screens (stretch aspect "expand") centre it and let the
+## background colour fill the rest, so there are no black bars.
+func _center_stage() -> void:
+	var off := ((size - Vector2(360, 640)) / 2.0).floor().max(Vector2.ZERO)
+	if screen != null:
+		screen.position = off
+	overlay.position = off
 
 
 func _fade_to(s_factory: Callable) -> void:
